@@ -1,0 +1,43 @@
+\documentclass[a4paper]{article}
+\input{General/Preamble} % Loads in the preamble 
+\input{General/Settings} % Loads in user defined settings
+
+% ============ DOCUMENT ============
+\begin{document}
+\pagenumbering{arabic}
+\setcounter{page}{1} 
+% Inserts the front page
+\input{Contents/0. Frontpage}
+\newpage
+
+% Table of Contents
+\tableofcontents
+\newpage
+
+\input{Contents/1. introduction}
+\newpage
+
+% content
+ \section{DesignPatterns}
+ \input{Contents/2. problem_statement}
+ \input{Contents/3. proposed_solution}
+ \input{Contents/4. evalutation}
+ \input{Contents/5. Applications}
+ \input{Contents/6. quiz}
+
+ \newpage
+
+% ============ REFERENCES ============
+% Dùng \nocite{*} để in toàn bộ tài liệu trong file .bib mà không cần trích dẫn cụ thể trong bài
+\nocite{*} 
+
+% Gọi file References.tex (file này đã chứa sẵn các lệnh \bibliographystyle và \bibliography)
+\input{ref/References}
+\newpage
+
+% % Appendix
+% \appendix
+% \input{Appendix/appendix}
+% \newpage
+
+\end{document}
