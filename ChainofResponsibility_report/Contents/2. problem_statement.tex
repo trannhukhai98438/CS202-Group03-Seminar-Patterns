@@ -1,1 +1,53 @@
-\section{Problem statement}
+\subsection{Problem Statement}
+
+\subsubsection{Scenario Description}
+Consider an enterprise-level application that processes incoming user requests, such as an Online Banking or E-Commerce system. Before executing any core business operation, each request must traverse multiple sequential processing stages to ensure security, correctness, and system stability. These stages typically include:
+
+\begin{enumerate}
+    \item \textbf{Authentication:} Verifying whether the user is properly authenticated.
+    \item \textbf{Authorization:} Ensuring that the user has sufficient permissions to access the requested resource.
+    \item \textbf{Data Validation:} Sanitizing and validating input data to prevent invalid input and security vulnerabilities (e.g., injection attacks).
+    \item \textbf{Logging \& Rate Limiting:} Recording request metadata for monitoring purposes and preventing abuse through request throttling.
+\end{enumerate}
+
+Such a processing pipeline is fundamental in real-world systems, where each step represents a distinct responsibility within the overall request lifecycle.
+
+\subsubsection{Traditional Approach and Naïve Design}
+A straightforward implementation of this pipeline is to encapsulate all processing steps within a single monolithic class using nested conditional logic (e.g., \texttt{if-else} statements):
+
+\begin{lstlisting}[language=Java, caption={Naïve request processing using nested conditionals}]
+public class RequestHandler {
+    public void process(Request request) {
+        if (authenticate(request)) {
+            if (authorize(request)) {
+                if (validate(request)) {
+                    // Execute actual core logic
+                    System.out.println("Executing business logic...");
+                }
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+While this approach may appear simple and effective for small-scale systems, it quickly becomes problematic as the number of processing steps increases.
+
+\subsubsection{Architectural Limitations}
+As the system evolves, the monolithic design introduces several critical architectural limitations:
+
+\begin{itemize}
+    \item \textbf{Violation of the Open/Closed Principle (OCP):} Introducing new processing steps (e.g., data decryption or auditing) requires direct modification of the \texttt{RequestHandler} class, increasing the risk of unintended side effects.
+    
+    \item \textbf{Tight Coupling:} The request sender is tightly coupled with concrete processing logic, reducing modularity and limiting reuse of individual components.
+    
+    \item \textbf{High Complexity and Low Maintainability:} Deeply nested conditional structures significantly increase cyclomatic complexity, making the system harder to understand, test, and debug.
+    
+    \item \textbf{Rigid Execution Flow:} The processing sequence is hardcoded, making it difficult to dynamically modify, extend, or reorder processing steps at runtime.
+\end{itemize}
+
+These limitations highlight the need for a more flexible and modular architectural approach.
+
+\subsubsection{Design Goal}
+To address these challenges, the system requires a design mechanism that allows multiple independent handlers to process a request in a sequential and decoupled manner. Such a mechanism should support dynamic composition, extensibility, and maintainability, while eliminating direct dependencies between the request sender and specific processing components.
+
+This naturally leads to the adoption of the Chain of Responsibility pattern as a structured solution to these architectural challenges.

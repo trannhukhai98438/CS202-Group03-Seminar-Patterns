@@ -1,1 +1,12 @@
-\section{Applications}
+\subsection{Applications}
+
+The Chain of Responsibility (CoR) pattern is extensively utilized in modern software systems, particularly in scenarios that require flexible and decoupled request processing across multiple components.
+
+\subsubsection{Middleware Pipelines in Web Frameworks}
+A prominent application of CoR can be observed in middleware architectures of contemporary web frameworks. Technologies such as Express.js (Node.js), ASP.NET Core, and Spring Security implement request-processing pipelines where each middleware component performs a specific task, such as CORS validation, authentication, or logging. Each layer processes the incoming HTTP request and explicitly delegates control to the next component via a \texttt{next()} function, thereby forming a configurable and extensible processing chain.
+
+\subsubsection{Event Propagation in GUI Systems}
+CoR is also fundamental to event handling mechanisms in graphical user interface (GUI) frameworks. In systems such as HTML DOM event propagation, Java Swing, and macOS AppKit, user-generated events (e.g., mouse clicks or keyboard inputs) are propagated through a hierarchy of UI elements. If a component does not handle an event, it forwards the event to its parent container, continuing the propagation process until a suitable handler is found or the event reaches the root of the hierarchy.
+
+\subsubsection{Hierarchical Logging Frameworks}
+Logging infrastructures commonly employ CoR to manage log message handling across multiple output channels. Frameworks such as Log4j organize loggers based on severity levels (e.g., \texttt{DEBUG}, \texttt{INFO}, \texttt{WARN}, \texttt{ERROR}). When a log event is generated, it is passed through a chain of handlers (appenders), where each handler determines whether to process the message based on its configured threshold. For example, lower-severity logs may be written to local storage, while higher-severity events can trigger additional actions such as alert notifications.

@@ -1,2 +1,24 @@
 \section{Introduction}
 
+\subsection{Overview \& Context}
+In modern software engineering, the ability to design systems that are flexible, maintainable, and scalable is of paramount importance. Design patterns serve as standardized, reusable solutions to common problems in Object-Oriented Design (OOD), enabling developers to build robust and adaptable architectures. Among the various categories of design patterns, behavioral patterns specifically address the interaction and responsibility distribution among objects, thereby improving communication flow within a system.
+
+\subsection{Motivation}
+A recurring challenge in application development is the need to process a request through multiple sequential steps, such as authentication, authorization, validation, and logging. Traditional implementations based on monolithic \texttt{if-else} or \texttt{switch-case} constructs often result in tightly coupled code, reduced flexibility, and poor maintainability. Such approaches also violate key design principles, particularly the Open/Closed Principle (OCP). The \textbf{Chain of Responsibility (CoR)} pattern provides a more elegant solution by decoupling the sender of a request from its potential receivers, allowing multiple objects to handle the request dynamically.
+
+\subsection{Objectives and Scope}
+This report aims to deliver a comprehensive and critical analysis of the Chain of Responsibility pattern within the context of the CS202 course. The main objectives are as follows:
+\begin{itemize}
+    \item To formulate and analyze the underlying problem that motivates the use of the CoR pattern.
+    \item To examine the architectural structure and design principles associated with CoR.
+    \item To evaluate its implementation trade-offs, including advantages and limitations.
+    \item To illustrate real-world applications and provide practical evaluation scenarios.
+\end{itemize}
+Furthermore, this report emphasizes not only theoretical understanding but also practical applicability in real-world system design.
+
+\subsection{Report Organization}
+The remainder of this report is organized as follows:
+\begin{itemize}
+    \item \textbf{Section 2:} Presents a detailed analysis of the Chain of Responsibility pattern, including problem formulation, architectural design, evaluation, real-world applications, and assessment questions.
+    \item \textbf{Section 3:} Lists the references and supporting literature used in this report.
+\end{itemize}

@@ -1,1 +1,39 @@
-\section{Quiz}
+\subsection{Quiz}
+
+To evaluate understanding of the Chain of Responsibility pattern, consider the following technical scenarios:
+
+\subsubsection*{Question 1: Architectural Intent}
+\textbf{Scenario:} You are designing a system where an incoming request must be processed by \textit{all} validation steps in sequence, regardless of whether a previous step succeeded or failed. Is standard Chain of Responsibility the optimal choice?
+
+\begin{enumerate}[label=(\Alph*)]
+    \item Yes, CoR is strictly designed to execute all handlers unconditionally.
+    \item No, because standard CoR allows any handler to break the chain execution prematurely upon failure or completion.
+    \item Yes, but only if implemented with multiple threads.
+    \item No, Strategy pattern must be used instead.
+\end{enumerate}
+
+\textbf{Answer:} \textbf{(B)}. Standard CoR gives each handler the ability to stop propagation. If all steps must always execute, a pipeline or sequential processing model is more suitable.
+
+\subsubsection*{Question 2: Runtime Behavior}
+\textbf{Scenario:} Consider a chain composed of three handlers: \texttt{HandlerA} $\rightarrow$ \texttt{HandlerB} $\rightarrow$ \texttt{HandlerC}. If \texttt{HandlerB} processes a request and does not call the next handler, what is the outcome?
+
+\begin{enumerate}[label=(\Alph*)]
+    \item \texttt{HandlerC} will still execute automatically.
+    \item A runtime exception is thrown.
+    \item \texttt{HandlerC} is never invoked, and processing stops at \texttt{HandlerB}.
+    \item The request is reprocessed from \texttt{HandlerA}.
+\end{enumerate}
+
+\textbf{Answer:} \textbf{(C)}. In CoR, continuation depends explicitly on invoking the next handler. If omitted, the chain terminates at that point.
+
+\subsubsection*{Question 3: Advanced Design Consideration}
+\textbf{Scenario:} You are implementing a logging system where multiple handlers must process the same request independently (e.g., writing to a file, sending alerts, and storing metrics), and no handler should block others from executing. Which design adjustment is most appropriate?
+
+\begin{enumerate}[label=(\Alph*)]
+    \item Use standard CoR without modification.
+    \item Modify CoR so that each handler always forwards the request after processing.
+    \item Replace CoR with an Observer (Publish-Subscribe) pattern.
+    \item Use recursion to re-trigger the chain for each handler.
+\end{enumerate}
+
+\textbf{Answer:} \textbf{(C)}. When multiple independent consumers must react to the same event without affecting each other, the Observer pattern is a better fit. CoR is inherently sequential and control-flow driven, whereas Observer enables parallel, decoupled notifications.

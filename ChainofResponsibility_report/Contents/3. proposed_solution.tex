@@ -1,1 +1,215 @@
-\section{Proposed Solution}
+\subsection{Proposed Solution}
+
+To overcome the limitations of high coupling, rigid control flow, and poor maintainability inherent in the naïve conditional approach, we propose restructuring the system using the \textbf{Chain of Responsibility (CoR)} behavioral design pattern. This pattern introduces a more modular and extensible mechanism for processing requests through a sequence of independent components.
+
+\subsubsection{Core Concept and Architectural Idea}
+The fundamental principle of the Chain of Responsibility pattern is to decouple the sender of a request from its potential receivers. Rather than embedding all validation logic within a single monolithic structure, the processing workflow is decomposed into a series of independent objects known as \textbf{handlers}, each responsible for a specific task.
+
+These handlers are organized into a sequential chain, forming a processing pipeline. When a request enters the system:
+
+\begin{enumerate}
+    \item The request is first received by the initial handler in the chain.
+    \item Each handler evaluates the request based on its own responsibility and determines whether to process, transform, or reject it.
+    \item If the request remains valid, it is forwarded to the next handler via a reference, continuing the chain execution.
+\end{enumerate}
+
+This delegation-based mechanism eliminates the need for explicit control flow logic in the client and promotes a cleaner separation of concerns.
+
+\subsubsection{Architectural Components}
+The proposed architecture consists of four primary components:
+
+\begin{itemize}
+    \item \textbf{Handler (Interface / Abstract Class):} Defines a common interface for handling requests and for linking to the next handler in the chain.
+    
+    \item \textbf{BaseHandler (Optional):} Provides a default implementation for chaining behavior by maintaining a reference to the next handler and forwarding the request when appropriate.
+    
+    \item \textbf{Concrete Handlers:} Specialized subclasses that encapsulate distinct processing logic (e.g., \texttt{\allowbreak AuthenticationHandler}, \texttt{AuthorizationHandler}, \texttt{ValidationHandler}), each focusing on a single responsibility.
+    
+    \item \textbf{Client:} Responsible for constructing and configuring the handler chain dynamically, and for initiating the request processing by invoking the first handler.
+\end{itemize}
+
+This modular decomposition significantly improves extensibility and reusability across different system contexts.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=1.8cm and 2.0cm,
+        classbox/.style={
+            draw, 
+            rectangle, 
+            minimum width=4.2cm, 
+            minimum height=1.8cm, 
+            align=center, 
+            fill=blue!5, 
+            font=\small\sffamily
+        },
+        arrow/.style={-latex, thick},
+        inherit/.style={-{Triangle[open, length=3mm, width=3mm]}, thick}
+    ]
+
+    % Nodes
+    \node (base) [classbox] {
+        \textbf{\textit{BaseHandler}}\\[2pt]
+        \rule{3.8cm}{0.4pt}\\[3pt]
+        \footnotesize-- nextHandler: BaseHandler\\[1pt]
+        \footnotesize+ setNext(h): BaseHandler\\[1pt]
+        \footnotesize+ handle(r: Request)
+    };
+    
+    \node (client) [classbox, left=1.8cm of base, minimum height=1.3cm] {
+        \textbf{Client / Application}\\[2pt]
+        \rule{3.8cm}{0.4pt}\\[3pt]
+        \footnotesize+ main()
+    };
+    
+    \node (auth) [classbox, below left=1.8cm and 0.2cm of base, minimum height=1.3cm] {
+        \textbf{AuthenticationHandler}\\[2pt]
+        \rule{3.8cm}{0.4pt}\\[3pt]
+        \footnotesize+ handle(r: Request)
+    };
+    
+    \node (valid) [classbox, below right=1.8cm and 0.2cm of base, minimum height=1.3cm] {
+        \textbf{ValidationHandler}\\[2pt]
+        \rule{3.8cm}{0.4pt}\\[3pt]
+        \footnotesize+ handle(r: Request)
+    };
+
+    % Connections
+    \draw[inherit] (auth) -- (base);
+    \draw[inherit] (valid) -- (base);
+    \draw[arrow] (client) -- node[above, font=\scriptsize] {initiates} (base);
+    
+    % FIX MŨI TÊN TỰ TRỎ: Cho đi từ cạnh phải (east) vòng sang cạnh trên (north) với khoảng cách rộng rãi
+    \draw[arrow] (base.east) -- ++(1.2, 0) -- ++(0, 1.5) node[above, pos=0.5, font=\tiny] {nextHandler} -| ([xshift=1.2cm]base.north);
+
+    \end{tikzpicture}
+    \caption{UML Class Diagram for Chain of Responsibility Pattern}
+    \label{fig:cor_class_diagram}
+\end{figure}
+
+\subsubsection{Refactored Implementation}
+The following Java implementation demonstrates how the Chain of Responsibility pattern replaces monolithic conditional logic with a flexible, object-oriented structure:
+
+\begin{lstlisting}[language=Java, caption={Chain of Responsibility Pattern Implementation}]
+// 1. Base Handler Abstract Class
+public abstract class BaseHandler {
+    private BaseHandler nextHandler;
+
+    public BaseHandler setNext(BaseHandler nextHandler) {
+        this.nextHandler = nextHandler;
+        return nextHandler; // Enables fluent chaining
+    }
+
+    public void handle(Request request) {
+        if (nextHandler != null) {
+            nextHandler.handle(request);
+        }
+    }
+}
+
+// 2. Concrete Handlers
+public class AuthenticationHandler extends BaseHandler {
+    @Override
+    public void handle(Request request) {
+        if (!request.isAuthenticated()) {
+            System.out.println("[FAIL] Authentication failed. Terminating chain.");
+            return;
+        }
+        System.out.println("[SUCCESS] Authentication passed.");
+        super.handle(request);
+    }
+}
+
+public class ValidationHandler extends BaseHandler {
+    @Override
+    public void handle(Request request) {
+        if (!request.isValid()) {
+            System.out.println("[FAIL] Data validation failed. Terminating chain.");
+            return;
+        }
+        System.out.println("[SUCCESS] Data validation passed.");
+        super.handle(request);
+    }
+}
+
+// 3. Client Configuration and Execution
+public class Application {
+    public static void main(String[] args) {
+        BaseHandler authHandler = new AuthenticationHandler();
+        BaseHandler validHandler = new ValidationHandler();
+
+        authHandler.setNext(validHandler);
+
+        Request userRequest = new Request(true, true);
+        authHandler.handle(userRequest);
+    }
+}
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        lifeline/.style={draw, dashed, gray!80, thick},
+        entity/.style={
+            draw, 
+            rectangle, 
+            fill=blue!10, 
+            minimum width=2.6cm, 
+            minimum height=0.8cm, 
+            font=\small\sffamily\bfseries,
+            align=center
+        },
+        msg/.style={-latex, thick, font=\xsf},
+        ret/.style={-latex, dashed, thick, font=\xsf}
+    ]
+
+    % Define font size shortcut
+    \newcommand{\xsf}{\fontsize{8}{10}\sffamily}
+
+    % Lifeline entities
+    \node (client) at (0,0) [entity] {:Client};
+    \node (auth) at (4.0,0) [entity] {:AuthHandler};
+    \node (val) at (8.0,0) [entity] {:ValidationHandler};
+
+    % Draw Lifelines
+    \draw [lifeline] (client) -- (0,-5.2);
+    \draw [lifeline] (auth) -- (4.0,-5.2);
+    \draw [lifeline] (val) -- (8.0,-5.2);
+
+    % Messages and Execution Flow
+    % 1. Client calls AuthHandler
+    \draw [msg] (0,-0.9) -- node[above, font=\xsf] {handle(request)} (4.0,-0.9);
+    \node[anchor=west, font=\tiny, color=blue!80!black] at (4.1, -1.3) {[Authentication Passed]};
+    
+    % 2. AuthHandler delegates to ValidationHandler
+    \draw [msg] (4.0,-2.0) -- node[above, font=\xsf] {super.handle(request)} (8.0,-2.0);
+    \node[anchor=west, font=\tiny, color=blue!80!black] at (8.1, -2.4) {[Validation Passed]};
+    
+    % 3. Self call for Core Logic
+    \draw [msg] (8.0,-3.1) -- ++(1.4,0) -- ++(0,-0.6) -- node[below, pos=0.85, font=\tiny] {Execute Business Logic} (8.0,-3.7);
+
+    % 4. Return calls
+    \draw [ret] (8.0,-4.3) -- (4.0,-4.3);
+    \draw [ret] (4.0,-4.7) -- (0,-4.7);
+
+    \end{tikzpicture}
+    \caption{UML Sequence Diagram showing successful request execution flow}
+    \label{fig:cor_sequence_diagram}
+\end{figure}
+
+\subsubsection{Resolution of Design Limitations}
+By adopting the Chain of Responsibility architecture, the system effectively resolves the structural shortcomings of the traditional approach:
+
+\begin{itemize}
+    \item \textbf{Single Responsibility Principle (SRP):} Each handler encapsulates a single processing concern, leading to clearer separation of logic and improved maintainability.
+    
+    \item \textbf{Open/Closed Principle (OCP):} New processing steps can be introduced by extending the handler hierarchy without modifying existing, stable components.
+    
+    \item \textbf{Loose Coupling:} The client interacts only with the head of the chain, remaining independent of the internal composition and implementation details of subsequent handlers.
+    
+    \item \textbf{Runtime Flexibility:} The processing chain can be dynamically assembled, reordered, or extended at runtime, enabling adaptive system behavior based on context or configuration.
+\end{itemize}
+
+Overall, this design transforms a rigid and tightly coupled structure into a flexible, scalable, and maintainable processing pipeline.
+
+The following section further evaluates the effectiveness of this pattern through practical analysis and real-world applications.

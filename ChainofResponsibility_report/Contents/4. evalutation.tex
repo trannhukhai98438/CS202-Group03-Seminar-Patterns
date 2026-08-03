@@ -1,1 +1,47 @@
-\section{Evaluation}
+\subsection{Evaluation}
+
+While the Chain of Responsibility (CoR) pattern introduces a high degree of structural flexibility and modularity, a rigorous architectural evaluation must consider both its strengths and inherent trade-offs in practical system design.
+
+\subsubsection{Key Strengths}
+\begin{itemize}
+    \item \textbf{Strong Adherence to OCP and SRP:} Each processing responsibility is encapsulated within an independent concrete handler, ensuring clear separation of concerns. New functionality can be introduced by extending the handler hierarchy without modifying existing, stable components.
+    
+    \item \textbf{Dynamic and Flexible Execution Flow:} The sequence of handlers can be configured and reconfigured at runtime, enabling context-aware processing pipelines (e.g., activating an \texttt{IpFilterHandler} under high-security conditions).
+    
+    \item \textbf{Loose Coupling and Improved Modularity:} The request sender is decoupled from the specific processing logic, interacting only with the entry point of the chain. This abstraction enhances system modularity and promotes component reuse.
+\end{itemize}
+
+\subsubsection{Limitations and Trade-offs}
+Despite its architectural advantages, the CoR pattern introduces several non-trivial trade-offs that must be carefully evaluated:
+
+\begin{enumerate}
+    \item \textbf{Uncertain Request Handling Guarantee:} Since each handler independently decides whether to process or forward the request, there is no built-in guarantee that a request will be handled. Improper chain configuration may result in requests reaching the end of the chain without being processed.
+    
+    \item \textbf{Increased Debugging Complexity:} The dynamic and distributed nature of the processing chain makes it more challenging to trace execution flow during debugging. The control flow is no longer centralized, requiring developers to analyze interactions across multiple handler layers.
+    
+    \item \textbf{Performance and Latency Overhead:} Sequential delegation through multiple handlers introduces additional method calls and stack operations. In performance-critical or high-throughput systems, this overhead may become significant if the chain is excessively long.
+\end{enumerate}
+
+\subsubsection{Comparative Analysis with Related Design Patterns}
+To better justify the adoption of CoR in practical scenarios, it is essential to compare it with other related design patterns. Table~\ref{tab:pattern_comparison} summarizes the key distinctions:
+
+\begin{table}[H]
+    \centering
+    \caption{Comparative Analysis of CoR vs. Related Patterns}
+    \label{tab:pattern_comparison}
+    \small
+    \begin{tabularx}{\linewidth}{l X X}
+        \hline
+        \textbf{Pattern} & \textbf{Primary Intent} & \textbf{Key Difference from CoR} \\
+        \hline
+        \textbf{Chain of Responsibility} & Passes a request through a sequence of handlers. & Any handler may process, modify, or terminate the request flow. \\
+        \textbf{Decorator} & Dynamically extends object behavior. & Focuses on behavior composition without altering execution flow. \\
+        \textbf{Strategy} & Encapsulates interchangeable algorithms. & Selects a single algorithm at runtime rather than executing multiple steps sequentially. \\
+        \textbf{Command} & Encapsulates requests as objects. & Emphasizes request abstraction and execution control, not chained processing. \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+This comparison highlights that CoR is particularly suitable for scenarios requiring sequential, conditional processing, where multiple components may participate in handling a request.
+
+Overall, the effectiveness of the Chain of Responsibility pattern depends heavily on careful chain design and appropriate use within the system context.
