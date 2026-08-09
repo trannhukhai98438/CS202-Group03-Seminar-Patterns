@@ -1,0 +1,125 @@
+\section{Implementation: Classic Visitor in C++}
+\label{sec:implementation}
+
+To demonstrate the practical application of the theoretical concepts discussed, this section presents a complete, runnable C++ implementation of the Classic Visitor pattern applied to the geometric shapes scenario. 
+
+In a professional C++ software architecture, these components are typically distributed across multiple header and source files to minimize compilation dependencies. A critical technical nuance when implementing the Visitor pattern in C++ is the inherently circular dependency between the \texttt{Visitor} interface and the \texttt{Element} interface. To resolve this, forward declarations must be utilized appropriately. The implementation is logically divided into three primary components: core interfaces, concrete elements and operations, and client execution.
+
+\subsection{Core Interfaces}
+The foundational step involves defining the abstract base classes. Forward declarations of the concrete elements are required before defining the \texttt{Visitor} interface, allowing the compiler to recognize the types without requiring their full definitions.
+
+\begin{lstlisting}[language=C++, caption=Core Interfaces (typically \texttt{Visitor.h} and \texttt{Shape.h})]
+#pragma once
+#include <string>
+
+// Forward declarations to resolve circular dependencies
+class Circle;
+class Rectangle;
+
+// ================= VISITOR HIERARCHY =================
+class Visitor {
+public:
+    virtual ~Visitor() = default;
+    
+    // Overloaded visit methods for each Concrete Element
+    virtual void visit(Circle& c) = 0;
+    virtual void visit(Rectangle& r) = 0;
+};
+
+// ================= ELEMENT HIERARCHY =================
+class Shape {
+public:
+    virtual ~Shape() = default;
+    virtual void draw() = 0;
+    virtual double area() = 0;
+    
+    // The core entry point for the Visitor
+    virtual void accept(Visitor& v) = 0;
+};
+\end{lstlisting}
+
+\subsection{Concrete Implementations}
+Once the abstract contracts are established, the concrete classes can be implemented. The concrete elements (\texttt{Circle}, \texttt{Rectangle}) provide their domain-specific logic and implement the \texttt{accept} method to initiate the second dispatch. Concurrently, the \texttt{SaveVisitor} encapsulates the state (e.g., the file path) and the specific serialization logic.
+
+\begin{lstlisting}[language=C++, caption=Concrete Classes (Elements and Visitors)]
+#include <iostream>
+// In a real project, this file would include Shape.h and Visitor.h
+
+// --- Concrete Elements ---
+class Circle : public Shape {
+private:
+    float radius;
+public:
+    explicit Circle(float r) : radius(r) {}
+    
+    void draw() override { std::cout << "Drawing Circle\n"; }
+    double area() override { return 3.14159 * radius * radius; }
+    
+    // First Dispatch: Resolves to Circle::accept
+    void accept(Visitor& v) override {
+        // Second Dispatch: Calls visit(Circle&)
+        v.visit(*this); 
+    }
+};
+
+class Rectangle : public Shape {
+private:
+    float a, b;
+public:
+    Rectangle(float width, float height) : a(width), b(height) {}
+    
+    void draw() override { std::cout << "Drawing Rectangle\n"; }
+    double area() override { return a * b; }
+    
+    // First Dispatch: Resolves to Rectangle::accept
+    void accept(Visitor& v) override {
+        // Second Dispatch: Calls visit(Rectangle&)
+        v.visit(*this); 
+    }
+};
+
+// --- Concrete Visitor ---
+class SaveVisitor : public Visitor {
+private:
+    std::string filePath;
+public:
+    // Explicit constructor to initialize the visitor's state
+    explicit SaveVisitor(const std::string& path) : filePath(path) {}
+    
+    void visit(Circle& c) override {
+        // Logic for saving a Circle to file
+        std::cout << "Saving Circle data to " << filePath << "...\n";
+    }
+    
+    void visit(Rectangle& r) override {
+        // Logic for saving a Rectangle to file
+        std::cout << "Saving Rectangle data to " << filePath << "...\n";
+    }
+};
+\end{lstlisting}
+
+\subsection{Client Code Execution}
+The client code remains entirely decoupled from the concrete visitor logic. It simply iterates through a heterogeneous collection of shapes and applies the desired operation via the \texttt{accept} method, showcasing the elegance and flexibility of the architecture.
+
+\begin{lstlisting}[language=C++, caption=Client Code demonstrating polymorphic iteration and Double Dispatch (\texttt{main.cpp})]
+#include <vector>
+#include <memory>
+
+void practiceUsage() {
+    // Constructing a heterogeneous collection of shapes using smart pointers for RAII
+    std::vector<std::unique_ptr<Shape>> shapes;
+    shapes.push_back(std::make_unique<Circle>(5.0f));
+    shapes.push_back(std::make_unique<Rectangle>(4.0f, 6.0f));
+    
+    // Instantiating the new operation with necessary state
+    SaveVisitor saveOp("export_data.xml");
+    
+    // Applying the operation across the entire object structure
+    for (const auto& shape : shapes) {
+        // Executes double dispatch
+        shape->accept(saveOp); 
+    }
+    
+    // No explicit memory cleanup required (handled by std::unique_ptr)
+}
+\end{lstlisting}

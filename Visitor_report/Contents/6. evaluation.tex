@@ -1,0 +1,43 @@
+\section{Evaluation}
+\label{sec:evaluation}
+
+To quantitatively analyze the runtime efficiency of the three discussed Visitor pattern architectures, an empirical benchmark was conducted. This section outlines the testing environment, measurement methodology, and the recorded results.
+
+\subsection{Experimental Environment}
+To ensure transparency and reproducibility, the hardware and software configurations used for the benchmark are specified below:
+\begin{itemize}
+    \item \textbf{Operating System:} Windows
+    \item \textbf{CPU:} Intel(R) Core(TM) Ultra 7 255H
+    \item \textbf{Compiler:} GCC \texttt{g++.exe (Rev8, Built by MSYS2 project) 15.2.0}
+    \item \textbf{Optimization Flag:} \texttt{-O3} (to enable maximum performance optimizations)
+\end{itemize}
+
+\subsection{Measurement Methodology}
+The benchmark was carefully designed to prevent compiler optimization traps and hardware biases:
+\begin{itemize}
+    \item \textbf{Dataset:} A pre-allocated array consisting of 10,000,000 \texttt{Shape} objects (specifically \texttt{Circle} and \texttt{Rectangle}).
+    \item \textbf{Branch Predictor Neutralization:} The array was strictly randomized using the \texttt{std::mt19937} random number generator to defeat the CPU's branch predictor.
+    \item \textbf{Execution Strategy:} Each architectural variant was executed independently across 3 separate runs. Within each run, the system iterated through the entire 10-million-element array 20 times. The minimum execution time was extracted to filter out background system noise.
+\end{itemize}
+
+\subsection{Disclaimer}
+\textit{Disclaimer: The performance metrics presented in this evaluation are strictly for reference purposes. They represent the behavior of the architectures under a specific micro-benchmark scenario. These results should not be interpreted as absolute assertions, as execution times can fluctuate significantly depending on the target hardware, compiler version, memory architecture, and the complexity of the real-world payload. Notably, this benchmark does not completely isolate the dispatch cost from memory-layout effects. In particular, the \texttt{std::variant} implementation stores objects by value in contiguous memory, whereas the Classic and Acyclic Visitor implementations use polymorphic pointers on the heap. Therefore, the measured differences reflect both dispatch mechanisms and data-locality characteristics.}
+
+\subsection{Benchmark Results}
+The following table summarizes the execution times across the 3 independent runs, highlighting the minimum (best) time for a single iteration over the 10 million elements:
+
+\begin{table}[H]
+    \centering
+    \caption{Benchmark results for processing 10,000,000 objects.}
+    \label{tab:benchmark_results}
+    % Sử dụng resizebox để ép bảng vừa đúng kích thước chiều rộng trang (textwidth)
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{|l|r|r|r|r|}
+        \hline
+        \textbf{Architecture} & \textbf{Run 1 (ms)} & \textbf{Run 2 (ms)} & \textbf{Run 3 (ms)} & \textbf{Best Time (ms)} \\ \hline
+        \textbf{Modern Visitor} (\texttt{std::variant}) & 44.07 & 42.81 & 43.39 & \textbf{42.81} \\ \hline
+        \textbf{Classic Visitor} (Double Dispatch) & 292.68 & 261.37 & 228.11 & \textbf{228.11} \\ \hline
+        \textbf{Acyclic Visitor} (\texttt{dynamic\_cast}) & 4134.47 & 3953.18 & 4449.97 & \textbf{3953.18} \\ \hline
+    \end{tabular}%
+    }
+\end{table}

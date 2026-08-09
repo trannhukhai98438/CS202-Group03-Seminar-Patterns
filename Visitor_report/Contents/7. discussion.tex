@@ -1,0 +1,54 @@
+\section{Discussion}
+\label{sec:discussion}
+
+This section critically evaluates the three discussed architectural approaches for implementing the Visitor pattern. The comparison focuses on runtime performance, structural design, adherence to SOLID principles, and ease of maintenance.
+
+\subsection{Classic Visitor Pattern}
+
+\textbf{Advantages:}
+\begin{itemize}
+    \item \textbf{Extensibility of Operations:} It facilitates the seamless addition of new operations (Visitors) without modifying the existing codebase of the element hierarchy, strictly adhering to the Open/Closed Principle (OCP) in terms of behaviors.
+    \item \textbf{Cross-Hierarchy Processing:} The \texttt{Visitor} interface can declare \texttt{visit} methods for concrete elements that do not share the same abstract base class, allowing operations to span multiple disparate class hierarchies.
+\end{itemize}
+
+\textbf{Disadvantages:}
+\begin{itemize}
+    \item \textbf{Runtime Overhead:} The double-dispatch mechanism necessitates two virtual function calls (vtable lookups) per element. This indirection inherently slows down execution compared to a standard single dispatch.
+    \item \textbf{Cache Inefficiency:} Classic elements are typically managed via pointers and allocated dynamically on the heap. This scattered memory layout causes frequent CPU cache misses, further degrading runtime performance.
+    \item \textbf{Intrusive Architecture:} Implementing this pattern requires injecting the \texttt{accept} method into every element class. This makes it an unviable solution if the developer lacks access to the original source code (e.g., when dealing with third-party libraries).
+    \item \textbf{Type-Addition Bottleneck:} The design is fundamentally unsuited for systems where new element types are frequently added. Introducing a new concrete element requires modifying the base \texttt{Visitor} interface, which subsequently forces a recompilation of all existing visitor implementations, violating the OCP for types.
+    \item \textbf{Circular Dependency and Code Duplication:} The pattern introduces a rigid circular dependency between the element header files and the visitor header files. Furthermore, it often forces developers to write boilerplate code, repeating similar \texttt{visit} logic for different elements.
+\end{itemize}
+
+
+\subsection{Modern C++ Approach (\texttt{std::variant} and \texttt{std::visit})}
+
+\textbf{Advantages:}
+\begin{itemize}
+    \item \textbf{Observed Runtime Advantage in the Benchmark:} By storing objects by value, \texttt{std::variant} ensures contiguous memory allocation (cache-friendly). Furthermore, it utilizes compile-time type-based visitation over a closed set of alternatives rather than traditional vtables, reducing dispatch overhead in common scenarios.
+    \item \textbf{Non-Intrusive Design:} The elements remain entirely independent. There is no need to define a base class or implement an \texttt{accept} method, allowing this approach to work seamlessly with third-party or legacy classes.
+    \item \textbf{Flexible Subsetting:} Developers can define a variant using a specific subset of derived classes rather than being forced to depend on the entire hierarchy.
+    \item \textbf{Code Deduplication:} By leveraging generic lambdas (\texttt{auto}) or templated \texttt{operator()} methods inside the visitor functor, developers can handle multiple types implicitly, significantly reducing repetitive code (adhering to the DRY principle).
+\end{itemize}
+
+\textbf{Disadvantages:}
+\begin{itemize}
+    \item \textbf{Violation of the Dependency Inversion Principle (DIP):} Unlike traditional OOP where high-level modules depend on abstractions (e.g., \texttt{Shape*}), \texttt{std::variant} requires hardcoding the exact list of concrete types (e.g., \texttt{std::variant<Circle, Rectangle>}). This couples the design directly to concrete implementations.
+    \item \textbf{Type-Addition Bottleneck (OCP Violation):} Similar to the Classic Visitor, adding a new type requires modifying the \texttt{std::variant} type alias and updating the functor to handle the new type, which triggers extensive recompilation.
+\end{itemize}
+
+
+\subsection{The Acyclic Visitor Pattern}
+
+\textbf{Advantages:}
+\begin{itemize}
+    \item \textbf{Decoupled Architecture:} It entirely eliminates the circular dependency problem found in the Classic Visitor by utilizing a degenerate base interface.
+    \item \textbf{Safe and Independent Evolution:} Acyclic Visitor reduces the coupling between the central visitor interface and individual element types, allowing new element-specific visitor interfaces to be introduced without modifying a monolithic Visitor interface. This prevents cascading compilation errors when extending parts of the system.
+    \item \textbf{Selective Implementation:} Concrete visitors are only required to inherit and implement the specific visitor interfaces for the elements they actually intend to process, avoiding bloated ``catch-all'' interfaces.
+\end{itemize}
+
+\textbf{Disadvantages:}
+\begin{itemize}
+    \item \textbf{Severe Runtime Overhead:} The core dispatch mechanism relies on cross-casting via \texttt{dynamic\_cast}. Run-Time Type Information (RTTI) lookups are notoriously slow in C++, making this pattern unsuitable for performance-critical applications (e.g., game engines or high-frequency trading).
+    \item \textbf{Retained Intrusiveness:} Despite fixing the dependency cycle, the Acyclic Visitor still requires element classes to implement the \texttt{accept} method, maintaining an intrusive footprint on the data structures.
+\end{itemize}

@@ -1,0 +1,73 @@
+\section{Quiz}
+\label{sec:quiz}
+
+To reinforce the concepts discussed during the seminar, the following multiple-choice questions have been designed. They cover the fundamental mechanics of the Classic Visitor pattern, as well as the architectural traits of its modern variants.
+
+\begin{enumerate}
+    \item \textbf{What type of dispatch is naturally applied by C++, and what type of dispatch is simulated by the Visitor pattern?}
+    \begin{enumerate}[label=\textbf{\Alph*.}]
+        \item Double-dispatch, single-dispatch
+        \item Both single-dispatch
+        \item Both double-dispatch
+        \item Single-dispatch, double-dispatch
+    \end{enumerate}
+    \textit{Answer: D}
+
+    \item \textbf{When is the BEST time to use the Visitor pattern?}
+    \begin{enumerate}[label=\textbf{\Alph*.}]
+        \item When the classes defining the object structure change frequently.
+        \item When the object structure is completely stable, but you often need to define new operations over it.
+        \item When you need to hide the creation logic of an object.
+        \item When you want to pass a request along a chain of objects until it is handled.
+    \end{enumerate}
+    \textit{Answer: B}
+
+    \item \textbf{What is one of the main negative consequences (drawbacks) of using the Visitor pattern?}
+    \begin{enumerate}[label=\textbf{\Alph*.}]
+        \item It makes adding new operations incredibly difficult.
+        \item It can break encapsulation by forcing elements to expose their internal state via public methods.
+        \item It prevents visitors from accumulating state during traversal.
+        \item It forces all elements to share a single, strict parent class.
+    \end{enumerate}
+    \textit{Answer: B}
+\end{enumerate}
+
+
+\begin{enumerate}
+    \setcounter{enumi}{3} % Bắt đầu đếm tiếp từ câu 4
+    \item \textbf{How does the modern \texttt{std::variant} approach eliminate the need for an abstract base class and the intrusive \texttt{accept} method?}
+    \begin{enumerate}[label=\textbf{\Alph*.}]
+        \item By using \texttt{dynamic\_cast} to resolve types at runtime recursively.
+        \item By relying on compile-time type-based visitation over a closed set of alternatives and invoking an overloaded \texttt{operator()} inside a Functor.
+        \item By implementing the double-dispatch mechanism exclusively through \texttt{virtual} functions.
+        \item By forcing all elements to inherit from a common \texttt{std::variant} interface.
+    \end{enumerate}
+    \textit{Answer: B}
+    
+    \item \textbf{What is the primary architectural technique utilized by the Acyclic Visitor pattern to break the circular dependency between elements and visitors?}
+    \begin{enumerate}[label=\textbf{\Alph*.}]
+        \item Utilizing a single degenerate (empty) base interface combined with runtime cross-casting (\texttt{dynamic\_cast}).
+        \item Extracting all \texttt{visit} methods into a standalone \texttt{std::visit} function.
+        \item Using multiple inheritance for the Element classes instead of the Visitor classes.
+        \item Storing elements contiguously in memory using \texttt{std::vector} to avoid pointer dependencies.
+    \end{enumerate}
+    \textit{Answer: A}
+
+    \item \textbf{According to the benchmark, what primarily contributes to the observed runtime advantage of the \texttt{std::variant} Visitor over the Classic and Acyclic Visitors?}
+    \begin{enumerate}[label=\textbf{\Alph*.}]
+        \item It utilizes RTTI lookups (\texttt{typeid}), which are heavily optimized by modern CPUs.
+        \item It executes fewer instructions by avoiding \texttt{dynamic\_cast} while continuing to use heap-allocated pointers.
+        \item It runs in a multi-threaded context automatically via standard C++17 library optimizations.
+        \item It stores objects by value, maximizing cache locality (cache hits), and entirely avoids virtual table (vtable) indirection.
+    \end{enumerate}
+    \textit{Answer: D}
+
+    \item \textbf{If new element types are expected to be added frequently, which approach is generally more suitable?}
+    \begin{enumerate}[label=\textbf{\Alph*.}]
+        \item Classic Visitor, because it strictly adheres to the Open/Closed Principle for both operations and types.
+        \item \texttt{std::variant}, because it easily supports adding new types without modifying the variant alias or recompiling.
+        \item Acyclic Visitor, because it allows introducing new element-specific visitor interfaces without modifying a monolithic Visitor interface.
+        \item None of them, as the Visitor pattern is fundamentally flawed when dealing with new operations.
+    \end{enumerate}
+    \textit{Answer: C}
+\end{enumerate}
