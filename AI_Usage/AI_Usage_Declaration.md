@@ -35,16 +35,15 @@ I declare that the core conceptual design, primary algorithm implementation, and
 # AI Usage Declaration
 
 **Student Name:** Trần Đăng Khoa
-**Student ID:** [MSSV]  
+**Student ID:** 25125056  
 
 ## 1. Tools Used
-- Google Gemini: Used for [mục đích, vd: clarifying graph pathfinding concepts].
-- GitHub Copilot: Used for [mục đích, vd: auto-completing boilerplate code].
+- Google Gemini: Used for generating LaTeX code for the Chain of Responsibility pattern slide report.
 
 ## 2. Scope of AI Usage
 - **Drafting & Brainstorming:** Used AI to suggest the outline for the academic report.
-- **Coding Assistance:** Prompted AI to explain edge cases in [tên thuật toán/tính năng] and suggest debugging approaches for memory leaks in C++.
-- **Proofreading:** Used AI to check grammar and improve sentence flow in the LaTeX document.
+- ** LaTeX Code Generation:** Prompted AI to write Beamer/LaTeX source code for formatting slide layouts, structuring bullet points, and rendering UML diagrams.
+- **Proofreading:** Used AI to check English grammar, refine technical descriptions, and improve text flow within the slide deck.
 
 ## 3. Originality Statement
 I declare that the core conceptual design, primary algorithm implementation, and critical analysis in this report are entirely my own original work. AI was strictly used as an assistive tool as outlined above.
