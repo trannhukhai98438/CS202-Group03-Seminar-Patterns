@@ -42,7 +42,7 @@ I declare that the core conceptual design, primary algorithm implementation, and
 
 ## 2. Scope of AI Usage
 - **Drafting & Brainstorming:** Used AI to suggest the outline for the academic report.
-- ** LaTeX Code Generation:** Prompted AI to write Beamer/LaTeX source code for formatting slide layouts, structuring bullet points, and rendering UML diagrams.
+- **LaTeX Code Generation:** Prompted AI to write Beamer/LaTeX source code for formatting slide layouts, structuring bullet points, and rendering UML diagrams.
 - **Proofreading:** Used AI to check English grammar, refine technical descriptions, and improve text flow within the slide deck.
 
 ## 3. Originality Statement
