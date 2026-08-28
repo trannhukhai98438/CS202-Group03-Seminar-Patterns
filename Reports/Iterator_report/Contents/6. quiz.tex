@@ -1,1 +1,39 @@
-\section{Quiz}
+\subsection{Quiz}
+
+To evaluate understanding of the Iterator pattern, consider the following technical scenarios:
+
+\subsubsection*{Question 1: Architectural Intent and Design Principles}
+\textbf{Scenario:} Which software design principle is most directly preserved when traversal state and iteration algorithms are moved out of the container class and into a separate Iterator class?
+
+\begin{enumerate}[label=(\Alph*)]
+    \item Liskov Substitution Principle (LSP).
+    \item Single Responsibility Principle (SRP).
+    \item Interface Segregation Principle (ISP).
+    \item Dependency Inversion Principle (DIP).
+\end{enumerate}
+
+\textbf{Answer:} \textbf{(B)}. By delegating traversal mechanics and cursor bookkeeping to the Iterator, the aggregate class focuses exclusively on managing its data elements, satisfying the Single Responsibility Principle.
+
+\subsubsection*{Question 2: Concurrency and Thread Safety}
+\textbf{Scenario:} A developer needs to traverse a collection from multiple reader threads while a background thread occasionally appends new elements. If avoiding reader lock contention and achieving maximum read performance are the highest priorities, which strategy is most effective?
+
+\begin{enumerate}[label=(\Alph*)]
+    \item Using a single global mutex locking both reads and writes during every \texttt{next()} call.
+    \item Standard pointer-based iteration with volatile keywords.
+    \item Copy-on-Write (Atomic Pointer Swap) with immutable snapshot traversal.
+    \item Removing iterators and exposing the underlying array index.
+\end{enumerate}
+
+\textbf{Answer:} \textbf{(C)}. Copy-on-Write with atomic pointer swapping allows readers to iterate over an immutable snapshot lock-free at native CPU cache speeds, completely eliminating read lock contention.
+
+\subsubsection*{Question 3: C++ Optimization and Idioms}
+\textbf{Scenario:} In modern performance-critical C++, why are stack-allocated iterators with overloaded \texttt{operator++}, \texttt{operator*}, and \texttt{operator!=} often preferred over classic polymorphic iterators implementing pure virtual methods?
+
+\begin{enumerate}[label=(\Alph*)]
+    \item Polymorphic iterators do not support C++ syntax.
+    \item Stack-allocated range iterators avoid virtual dispatch overhead and dynamic heap allocations, enabling aggressive compiler inlining and zero-cost abstractions.
+    \item Virtual methods cannot be used inside loops in C++.
+    \item Polymorphic iterators consume less memory than pointer iterators.
+\end{enumerate}
+
+\textbf{Answer:} \textbf{(B)}. Stack-allocated iterators adhering to C++ range concepts eliminate the runtime overhead of vtable lookups and heap allocations (\texttt{new}/\texttt{std::make\_unique}), permitting the compiler to optimize the loop down to raw pointer arithmetic.

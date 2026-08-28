@@ -1,2 +1,23 @@
 \section{Introduction}
 
+\subsection{Overview \& Context}
+In modern software engineering, the ability to design systems that are flexible, maintainable, and scalable is of paramount importance. Design patterns serve as standardized, reusable solutions to common problems in Object-Oriented Design (OOD), enabling developers to build robust and adaptable architectures. Among the various categories of design patterns, behavioral patterns specifically address algorithms and the assignment of responsibilities between objects, improving communication flow and encapsulation within a system.
+
+\subsection{Motivation}
+A recurring challenge in application development is the need to access and traverse elements of an aggregate object without exposing its underlying internal structure (such as arrays, linked lists, trees, or hash tables). Exposing low-level traversal logic to client code introduces tight coupling, violates encapsulation, and breaks the Single Responsibility Principle. The \textbf{Iterator Pattern} provides an elegant solution by extracting navigation state and traversal algorithms into dedicated iterator objects, enabling uniform and decoupled data access across diverse collection types.
+
+\subsection{Objectives and Scope}
+This report aims to deliver a comprehensive and critical analysis of the Iterator pattern within the context of the CS202 course. The main objectives are as follows:
+\begin{itemize}
+    \item To formulate and analyze the underlying architectural problems motivating the Iterator pattern.
+    \item To examine the structural components, interface contracts, and implementation mechanics of iterators.
+    \item To evaluate performance trade-offs, modern C++ optimization techniques (such as zero-cost stack-allocated iterators and internal iterators), and concurrency handling strategies.
+    \item To explore real-world applications and compare the Iterator pattern with related behavioral patterns (Visitor, Chain of Responsibility).
+\end{itemize}
+
+\subsection{Report Organization}
+The remainder of this report is organized as follows:
+\begin{itemize}
+    \item \textbf{Section 2:} Presents a detailed analysis of the Iterator pattern, including problem statement, proposed solution architecture, evaluation and C++ optimization techniques, real-world applications, and quiz questions.
+    \item \textbf{Section 3:} Lists the references and supporting literature used in this report.
+\end{itemize}

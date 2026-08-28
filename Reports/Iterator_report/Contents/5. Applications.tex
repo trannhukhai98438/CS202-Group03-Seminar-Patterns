@@ -1,1 +1,118 @@
-\section{Applications}
+\subsection{Applications}
+
+\begin{itemize}
+    \item \textbf{Hierarchical DOM Traversal:} Modern web rendering engines use iterators to traverse recursive DOM trees without exposing internal node linkage.
+    \item \textbf{Infinite Scrolling and Pagination:} Mobile and web feeds leverage iterators to paginate remote API data on demand, keeping RAM usage low.
+    \item \textbf{Offline Sync Queues:} Mobile systems iterate sequentially through persistent task logs to replay operations after reconnecting to a network.
+\end{itemize}
+
+\subsubsection{Relationship with Other Design Patterns}
+
+\paragraph{Iterator vs. Visitor}
+\begin{table}[htbp]
+\centering
+\caption{Architectural Comparison: Iterator vs. Visitor}
+\label{tab:iterator_vs_visitor}
+\begin{tabular}{@{}p{3.5cm} p{5.5cm} p{5.5cm}@{}}
+\toprule
+\textbf{Dimension} & \textbf{Iterator Pattern} & \textbf{Visitor Pattern} \\ \midrule
+\textbf{Core Objective} & Access and sequence traversal without exposing internals. & Adding new operations to class hierarchies without modifying their code. \\ \midrule
+\textbf{Target Elements} & Homogeneous data structures. & Heterogeneous object hierarchies. \\ \midrule
+\textbf{Dispatch Model} & Single dispatch (\texttt{it->next()}). & Double dispatch (\texttt{node->accept(visitor)}). \\ \midrule
+\textbf{Control Flow} & External (driven by client loop). & Internal (driven by structural traversal). \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\noindent \textbf{Synergy:} An Iterator can traverse a complex composite hierarchy sequentially, passing each node to a Visitor that executes polymorphic operations without altering the tree structure.
+
+\paragraph{Iterator vs. Chain of Responsibility}
+
+\begin{table}[htbp]
+\centering
+\caption{Architectural Comparison: Iterator vs. Chain of Responsibility}
+\label{tab:iterator_vs_cor}
+\begin{tabular}{@{}p{3.5cm} p{5.5cm} p{5.5cm}@{}}
+\toprule
+\textbf{Dimension} & \textbf{Iterator Pattern} & \textbf{Chain of Responsibility Pattern} \\ \midrule
+\textbf{Core Objective} & Traverses elements sequentially across a collection without exposing its internal structure. & Passes a request along a dynamic chain of potential handlers until one processes it. \\ \midrule
+\textbf{Flow Control} & Sequential and deterministic; visits every element in order unless explicitly terminated by the client. & Conditional and delegated; execution passes down the handler link until a condition or termination criteria is met. \\ \midrule
+\textbf{Decoupling Target} & Decouples the consumer algorithm from the underlying data structure layout. & Decouples the sender of a request from its potential receivers/handlers. \\ \midrule
+\textbf{State Management} & Tracks iteration state (cursors, indices, tree pointers) explicitly. & Handlers maintain references only to their immediate successor in the chain. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\noindent \textbf{Synergy (Processing Pipelines):}
+The two patterns frequently collaborate in data processing pipelines, middleware stacks, and stream filtration:
+\begin{itemize}
+    \item The \textbf{Iterator} acts as the \textit{data source pump}, fetching items one-by-one from complex, memory-efficient data structures without exposing internal node layouts.
+    \item The \textbf{Chain of Responsibility} acts as the \textit{processing pipeline}, routing each item produced by the iterator through a series of discrete, loosely coupled validation, filtering, or transformation stages.
+\end{itemize}
+
+\begin{lstlisting}[language=C++, caption={Synergy between Iterator and Chain of Responsibility}]
+#include <iostream>
+#include <memory>
+#include <string>
+#include <vector>
+
+struct Track {
+    std::string title;
+    int durationSec;
+    bool isExplicit;
+};
+
+// --- CHAIN OF RESPONSIBILITY: Handler Interface ---
+class TrackFilter {
+protected:
+    std::shared_ptr<TrackFilter> nextHandler;
+
+public:
+    virtual ~TrackFilter() = default;
+
+    void setNext(std::shared_ptr<TrackFilter> next) {
+        nextHandler = next;
+    }
+
+    virtual bool process(const Track& track) {
+        if (nextHandler) {
+            return nextHandler->process(track);
+        }
+        return true; // Passed all pipeline stages
+    }
+};
+
+// Concrete Handler 1: Filter explicit content
+class ExplicitFilter : public TrackFilter {
+public:
+    bool process(const Track& track) override {
+        if (track.isExplicit) {
+            std::cout << "[Blocked - Explicit]: " << track.title << "\n";
+            return false;
+        }
+        return TrackFilter::process(track);
+    }
+};
+
+// Concrete Handler 2: Filter out short tracks (< 30 seconds)
+class DurationFilter : public TrackFilter {
+public:
+    bool process(const Track& track) override {
+        if (track.durationSec < 30) {
+            std::cout << "[Skipped - Too Short]: " << track.title << "\n";
+            return false;
+        }
+        return TrackFilter::process(track);
+    }
+};
+
+// --- ITERATOR + CHAIN OF RESPONSIBILITY IN ACTION ---
+void runAudioPipeline(TrackIterator& it, TrackFilter& pipeline) {
+    std::cout << "--- Processing Tracks Through Filter Pipeline ---\n";
+    while (it.hasNext()) {
+        const Track& track = it.next();
+        // Iterator provides the item; Chain processes/filters the item
+        if (pipeline.process(track)) {
+            std::cout << "[Playing]: " << track.title << "\n";
+        }
+    }
+}
+\end{lstlisting}
