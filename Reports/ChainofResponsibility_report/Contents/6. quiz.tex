@@ -12,7 +12,7 @@ To evaluate understanding of the Chain of Responsibility pattern, consider the f
     \item No, Strategy pattern must be used instead.
 \end{enumerate}
 
-\textbf{Answer:} \textbf{(B)}. Standard CoR gives each handler the ability to stop propagation. If all steps must always execute, a pipeline or sequential processing model is more suitable.
+\textbf{Answer:} \textbf{(B)}. Standard CoR gives each handler the ability to stop propagation. While many real-world architectures (like the authentication-authorization-validation example) use a processing/filter chain variant of CoR where the chain halts upon validation failure but continues on success, if a scenario requires that \textit{all} steps unconditionally execute regardless of intermediate failures or successes, a pure pipeline or sequential processing model is more suitable.
 
 \subsubsection*{Question 2: Runtime Behavior}
 \textbf{Scenario:} Consider a chain composed of three handlers: \texttt{HandlerA} $\rightarrow$ \texttt{HandlerB} $\rightarrow$ \texttt{HandlerC}. If \texttt{HandlerB} processes a request and does not call the next handler, what is the outcome?
@@ -37,3 +37,27 @@ To evaluate understanding of the Chain of Responsibility pattern, consider the f
 \end{enumerate}
 
 \textbf{Answer:} \textbf{(C)}. When multiple independent consumers must react to the same event without affecting each other, the Observer pattern is a better fit. CoR is inherently sequential and control-flow driven, whereas Observer enables parallel, decoupled notifications.
+
+\subsubsection*{Question 4: Design Principles and Coupling}
+\textbf{Scenario:} Which of the following design principles is most directly supported when a developer adds a new security check to an existing Chain of Responsibility pipeline without modifying the existing handlers or the client?
+
+\begin{enumerate}[label=(\Alph*)]
+    \item Liskov Substitution Principle (LSP)
+    \item Open/Closed Principle (OCP)
+    \item Interface Segregation Principle (ISP)
+    \item Dependency Inversion Principle (DIP)
+\end{enumerate}
+
+\textbf{Answer:} \textbf{(B)}. The Chain of Responsibility pattern allows developers to introduce new handlers to the chain (extension) without altering the existing client or handler code (modification), which perfectly aligns with the Open/Closed Principle.
+
+\subsubsection*{Question 5: Performance Implications}
+\textbf{Scenario:} In a highly performance-critical, real-time trading system, a very long Chain of Responsibility is used to validate incoming transactions. Which of the following is a potential drawback of this approach?
+
+\begin{enumerate}[label=(\Alph*)]
+    \item High memory consumption due to large handler object sizes.
+    \item Deadlocks due to circular references in the chain.
+    \item Increased latency overhead due to deep call stacks and dynamic dispatch.
+    \item Inability to process requests asynchronously.
+\end{enumerate}
+
+\textbf{Answer:} \textbf{(C)}. Sequential delegation through multiple handlers introduces additional method calls, stack operations, and potential dynamic dispatch overhead. In systems with strict latency requirements, an excessively long chain can become a performance bottleneck.

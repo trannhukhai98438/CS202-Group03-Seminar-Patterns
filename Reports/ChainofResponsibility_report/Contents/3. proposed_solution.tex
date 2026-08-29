@@ -1,6 +1,6 @@
 \subsection{Proposed Solution}
 
-To overcome the limitations of high coupling, rigid control flow, and poor maintainability inherent in the naïve conditional approach, we propose restructuring the system using the \textbf{Chain of Responsibility (CoR)} behavioral design pattern. This pattern introduces a more modular and extensible mechanism for processing requests through a sequence of independent components.
+To overcome the limitations of high coupling, rigid control flow, and poor maintainability inherent in the naïve conditional approach, we propose restructuring the system using the \textbf{Chain of Responsibility (CoR)} behavioral design pattern \cite{gof1994}. This pattern introduces a more modular and extensible mechanism for processing requests through a sequence of independent components.
 
 \subsubsection{Core Concept and Architectural Idea}
 The fundamental principle of the Chain of Responsibility pattern is to decouple the sender of a request from its potential receivers. Rather than embedding all validation logic within a single monolithic structure, the processing workflow is decomposed into a series of independent objects known as \textbf{handlers}, each responsible for a specific task.
@@ -83,66 +83,90 @@ This modular decomposition significantly improves extensibility and reusability 
     \draw[arrow] (base.east) -- ++(1.2, 0) -- ++(0, 1.5) node[above, pos=0.5, font=\tiny] {nextHandler} -| ([xshift=1.2cm]base.north);
 
     \end{tikzpicture}
-    \caption{UML Class Diagram for Chain of Responsibility Pattern}
+    \caption{UML Class Diagram for Chain of Responsibility Pattern (Authors' illustration)}
     \label{fig:cor_class_diagram}
 \end{figure}
 
 \subsubsection{Refactored Implementation}
-The following Java implementation demonstrates how the Chain of Responsibility pattern replaces monolithic conditional logic with a flexible, object-oriented structure:
+The following C++ implementation demonstrates how the Chain of Responsibility pattern replaces monolithic conditional logic with a flexible, object-oriented structure:
 
-\begin{lstlisting}[language=Java, caption={Chain of Responsibility Pattern Implementation}]
+\begin{lstlisting}[language=C++, caption={Chain of Responsibility Pattern Implementation}]
+#include <iostream>
+#include <memory>
+
+// Request definition
+struct Request {
+    bool isAuthenticated;
+    bool isValid;
+};
+
 // 1. Base Handler Abstract Class
-public abstract class BaseHandler {
-    private BaseHandler nextHandler;
+class BaseHandler {
+private:
+    std::shared_ptr<BaseHandler> nextHandler;
 
-    public BaseHandler setNext(BaseHandler nextHandler) {
-        this.nextHandler = nextHandler;
-        return nextHandler; // Enables fluent chaining
+public:
+    virtual ~BaseHandler() = default;
+
+    std::shared_ptr<BaseHandler> setNext(std::shared_ptr<BaseHandler> next) {
+        this->nextHandler = next;
+        return next; // Enables fluent chaining
     }
 
-    public void handle(Request request) {
-        if (nextHandler != null) {
-            nextHandler.handle(request);
+    virtual void handle(const Request& request) {
+        if (nextHandler) {
+            nextHandler->handle(request);
         }
     }
-}
+};
 
 // 2. Concrete Handlers
-public class AuthenticationHandler extends BaseHandler {
-    @Override
-    public void handle(Request request) {
-        if (!request.isAuthenticated()) {
-            System.out.println("[FAIL] Authentication failed. Terminating chain.");
+class AuthenticationHandler : public BaseHandler {
+public:
+    void handle(const Request& request) override {
+        if (!request.isAuthenticated) {
+            std::cout << "[FAIL] Authentication failed. Terminating chain.\n";
             return;
         }
-        System.out.println("[SUCCESS] Authentication passed.");
-        super.handle(request);
+        std::cout << "[SUCCESS] Authentication passed.\n";
+        BaseHandler::handle(request);
     }
-}
+};
 
-public class ValidationHandler extends BaseHandler {
-    @Override
-    public void handle(Request request) {
-        if (!request.isValid()) {
-            System.out.println("[FAIL] Data validation failed. Terminating chain.");
+class ValidationHandler : public BaseHandler {
+public:
+    void handle(const Request& request) override {
+        if (!request.isValid) {
+            std::cout << "[FAIL] Data validation failed. Terminating chain.\n";
             return;
         }
-        System.out.println("[SUCCESS] Data validation passed.");
-        super.handle(request);
+        std::cout << "[SUCCESS] Data validation passed.\n";
+        BaseHandler::handle(request);
     }
-}
+};
+
+class CoreLogicHandler : public BaseHandler {
+public:
+    void handle(const Request& request) override {
+        // Execute actual core logic
+        std::cout << "Executing business logic...\n";
+        BaseHandler::handle(request);
+    }
+};
 
 // 3. Client Configuration and Execution
-public class Application {
-    public static void main(String[] args) {
-        BaseHandler authHandler = new AuthenticationHandler();
-        BaseHandler validHandler = new ValidationHandler();
+int main() {
+    auto authHandler = std::make_shared<AuthenticationHandler>();
+    auto validHandler = std::make_shared<ValidationHandler>();
+    auto coreHandler = std::make_shared<CoreLogicHandler>();
 
-        authHandler.setNext(validHandler);
+    // Build the chain
+    authHandler->setNext(validHandler)->setNext(coreHandler);
 
-        Request userRequest = new Request(true, true);
-        authHandler.handle(userRequest);
-    }
+    Request userRequest = {true, true};
+    authHandler->handle(userRequest);
+
+    return 0;
 }
 \end{lstlisting}
 
@@ -168,32 +192,38 @@ public class Application {
 
     % Lifeline entities
     \node (client) at (0,0) [entity] {:Client};
-    \node (auth) at (4.0,0) [entity] {:AuthHandler};
-    \node (val) at (8.0,0) [entity] {:ValidationHandler};
+    \node (auth) at (3.5,0) [entity] {:AuthHandler};
+    \node (val) at (7.0,0) [entity] {:ValidationHandler};
+    \node (core) at (11.0,0) [entity] {:CoreLogicHandler};
 
     % Draw Lifelines
-    \draw [lifeline] (client) -- (0,-5.2);
-    \draw [lifeline] (auth) -- (4.0,-5.2);
-    \draw [lifeline] (val) -- (8.0,-5.2);
+    \draw [lifeline] (client) -- (0,-6.5);
+    \draw [lifeline] (auth) -- (3.5,-6.5);
+    \draw [lifeline] (val) -- (7.0,-6.5);
+    \draw [lifeline] (core) -- (11.0,-6.5);
 
     % Messages and Execution Flow
     % 1. Client calls AuthHandler
-    \draw [msg] (0,-0.9) -- node[above, font=\xsf] {handle(request)} (4.0,-0.9);
-    \node[anchor=west, font=\tiny, color=blue!80!black] at (4.1, -1.3) {[Authentication Passed]};
+    \draw [msg] (0,-0.9) -- node[above, font=\xsf] {handle(request)} (3.5,-0.9);
+    \node[anchor=west, font=\tiny, color=blue!80!black] at (3.6, -1.3) {[Authentication Passed]};
     
     % 2. AuthHandler delegates to ValidationHandler
-    \draw [msg] (4.0,-2.0) -- node[above, font=\xsf] {super.handle(request)} (8.0,-2.0);
-    \node[anchor=west, font=\tiny, color=blue!80!black] at (8.1, -2.4) {[Validation Passed]};
+    \draw [msg] (3.5,-2.0) -- node[above, font=\xsf] {BaseHandler::handle(request)} (7.0,-2.0);
+    \node[anchor=west, font=\tiny, color=blue!80!black] at (7.1, -2.4) {[Validation Passed]};
     
-    % 3. Self call for Core Logic
-    \draw [msg] (8.0,-3.1) -- ++(1.4,0) -- ++(0,-0.6) -- node[below, pos=0.85, font=\tiny] {Execute Business Logic} (8.0,-3.7);
+    % 3. ValidationHandler delegates to CoreLogicHandler
+    \draw [msg] (7.0,-3.1) -- node[above, font=\xsf] {BaseHandler::handle(request)} (11.0,-3.1);
+    
+    % 4. CoreLogicHandler executes logic
+    \draw [msg] (11.0,-4.0) -- ++(1.4,0) -- ++(0,-0.6) -- node[below, pos=0.85, font=\tiny] {Execute Business Logic} (11.0,-4.6);
 
-    % 4. Return calls
-    \draw [ret] (8.0,-4.3) -- (4.0,-4.3);
-    \draw [ret] (4.0,-4.7) -- (0,-4.7);
+    % 5. Return calls
+    \draw [ret] (11.0,-5.2) -- (7.0,-5.2);
+    \draw [ret] (7.0,-5.6) -- (3.5,-5.6);
+    \draw [ret] (3.5,-6.0) -- (0,-6.0);
 
     \end{tikzpicture}
-    \caption{UML Sequence Diagram showing successful request execution flow}
+    \caption{UML Sequence Diagram showing successful request execution flow (Authors' illustration)}
     \label{fig:cor_sequence_diagram}
 \end{figure}
 
@@ -201,9 +231,9 @@ public class Application {
 By adopting the Chain of Responsibility architecture, the system effectively resolves the structural shortcomings of the traditional approach:
 
 \begin{itemize}
-    \item \textbf{Single Responsibility Principle (SRP):} Each handler encapsulates a single processing concern, leading to clearer separation of logic and improved maintainability.
+    \item \textbf{Single Responsibility Principle (SRP) \cite{martin2000design}:} Each handler encapsulates a single processing concern, leading to clearer separation of logic and improved maintainability.
     
-    \item \textbf{Open/Closed Principle (OCP):} New processing steps can be introduced by extending the handler hierarchy without modifying existing, stable components.
+    \item \textbf{Open/Closed Principle (OCP) \cite{martin2000design}:} New processing steps can be introduced by extending the handler hierarchy without modifying existing, stable components.
     
     \item \textbf{Loose Coupling:} The client interacts only with the head of the chain, remaining independent of the internal composition and implementation details of subsequent handlers.
     
