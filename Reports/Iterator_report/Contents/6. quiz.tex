@@ -24,7 +24,7 @@ To evaluate understanding of the Iterator pattern, consider the following techni
     \item Removing iterators and exposing the underlying array index.
 \end{enumerate}
 
-\textbf{Answer:} \textbf{(C)}. Copy-on-Write with atomic pointer swapping allows readers to iterate over an immutable snapshot lock-free at native CPU cache speeds, completely eliminating read lock contention.
+\textbf{Answer:} \textbf{(C)}. Copy-on-Write with atomic pointer swapping allows readers to iterate over an immutable snapshot without acquiring mutex locks, completely eliminating reader lock contention.
 
 \subsubsection*{Question 3: C++ Optimization and Idioms}
 \textbf{Scenario:} In modern performance-critical C++, why are stack-allocated iterators with overloaded \texttt{operator++}, \texttt{operator*}, and \texttt{operator!=} often preferred over classic polymorphic iterators implementing pure virtual methods?
@@ -37,3 +37,27 @@ To evaluate understanding of the Iterator pattern, consider the following techni
 \end{enumerate}
 
 \textbf{Answer:} \textbf{(B)}. Stack-allocated iterators adhering to C++ range concepts eliminate the runtime overhead of vtable lookups and heap allocations (\texttt{new}/\texttt{std::make\_unique}), permitting the compiler to optimize the loop down to raw pointer arithmetic.
+
+\subsubsection*{Question 4: Memory Safety and Iterator Invalidation}
+\textbf{Scenario:} In C++, while an iterator is actively traversing a \texttt{std::vector}, a concurrent thread or a callback modifies the container by calling \texttt{push\_back()}. Why does this operation carry a high risk of undefined behavior?
+
+\begin{enumerate}[label=(\Alph*)]
+    \item \texttt{push\_back()} triggers dynamic heap reallocation if capacity is exceeded, moving elements to a new memory address and leaving the iterator with dangling pointers.
+    \item \texttt{std::vector} immediately throws a compile-time assertion error.
+    \item The iterator automatically detects the mutation and enters a deadlock.
+    \item The vector elements are reversed, causing infinite loops.
+\end{enumerate}
+
+\textbf{Answer:} \textbf{(A)}. Appending elements can exceed the current capacity of \texttt{std::vector}, prompting memory reallocation. This moves the underlying buffer and invalidates all existing pointers, references, and iterators pointing into the old storage.
+
+\subsubsection*{Question 5: Pattern Synergy (Iterator and Visitor)}
+\textbf{Scenario:} You are designing a complex document rendering engine that processes a hierarchical composite tree of nodes (e.g., text, images, tables). You need to traverse all elements sequentially and execute distinct export operations (HTML, PDF, Markdown) without modifying the node classes. What is the most cohesive architectural combination?
+
+\begin{enumerate}[label=(\Alph*)]
+    \item Use only the Singleton pattern for the whole document tree.
+    \item Use an Iterator to handle sequential tree navigation and decouple structure traversal, passing each visited node to a Visitor that executes double-dispatch polymorphic operations.
+    \item Implement concrete export logic inside each node class using hardcoded \texttt{switch-case} statements.
+    \item Flatten the tree into an array and use only the Chain of Responsibility pattern.
+\end{enumerate}
+
+\textbf{Answer:} \textbf{(B)}. The Iterator pattern encapsulates traversal state across the composite hierarchy, while the Visitor pattern encapsulates extensible polymorphic operations across heterogeneous node types via double dispatch, providing a clean and maintainable synergy.

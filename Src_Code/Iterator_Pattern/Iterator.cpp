@@ -2,6 +2,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 // Target data element
 struct Track {
@@ -29,7 +30,7 @@ class PlaylistQueue : public TrackAggregate {
 private:
     std::vector<Track> tracks;
 
-    // Concrete Iterator as an inner/friend class
+    // Concrete Iterator as an inner class
     class VectorTrackIterator : public TrackIterator {
     private:
         const std::vector<Track>& items;
@@ -44,6 +45,9 @@ private:
         }
 
         const Track& next() override {
+            if (!hasNext()) {
+                throw std::out_of_range("VectorTrackIterator::next(): Iterator out of bounds.");
+            }
             return items[cursor++];
         }
     };
@@ -70,13 +74,27 @@ void printPlaylist(const TrackAggregate& playlist) {
 }
 
 int main() {
-    PlaylistQueue playlist;
-    playlist.addTrack({"Bohemian Rhapsody", "Queen"});
-    playlist.addTrack({"Hotel California", "Eagles"});
-    playlist.addTrack({"Stairway to Heaven", "Led Zeppelin"});
+    try {
+        PlaylistQueue playlist;
+        playlist.addTrack({"Bohemian Rhapsody", "Queen"});
+        playlist.addTrack({"Hotel California", "Eagles"});
+        playlist.addTrack({"Stairway to Heaven", "Led Zeppelin"});
 
-    std::cout << "--- Playlist Tracks ---" << std::endl;
-    printPlaylist(playlist);
+        std::cout << "--- Playlist Tracks ---" << std::endl;
+        printPlaylist(playlist);
+
+        // Demonstrate bounds checking
+        std::cout << "\n--- Testing Bounds Protection ---" << std::endl;
+        auto emptyQueue = PlaylistQueue();
+        auto emptyIt = emptyQueue.createIterator();
+        std::cout << "Has next on empty: " << std::boolalpha << emptyIt->hasNext() << std::endl;
+        // The following line safely throws std::out_of_range instead of undefined behavior
+        // emptyIt->next();
+
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1;
+    }
 
     return 0;
 }

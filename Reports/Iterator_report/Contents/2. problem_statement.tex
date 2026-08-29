@@ -13,11 +13,11 @@ Without an abstraction layer, the client application must implement specific tra
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\linewidth]{Figures/desProblem.png}
-    \caption{Problem of Direct Container Traversal}
+    \caption{Problem of Direct Container Traversal~\cite{viblo_iterator}}
     \label{fig:iterator_problem}
 \end{figure}
 
-\noindent Exposing these low-level traversal mechanisms to consumer code introduces several architectural deficiencies:
+\noindent Exposing these low-level traversal mechanisms directly to consumer code introduces several architectural deficiencies and violates core object-oriented design principles~\cite{gof1994, refactoring_guru_iterator}:
 \begin{itemize}
     \item \textbf{Encapsulation Leakage:} The internal structure, node pointers, and indexing models of the collection are exposed directly to the client.
     \item \textbf{Single Responsibility Principle (SRP) Violation:} The aggregate class is burdened with managing traversal state and access algorithms in addition to managing its core dataset.

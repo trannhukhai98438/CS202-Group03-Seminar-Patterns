@@ -4,17 +4,16 @@
 **Student ID:** 25125024
 
 ## 1. Tools Used
-Google Gemini / ChatGPT: Used to regenerate the diagram illustrating the relationship between the 3 design patterns, as well as to research theoretical pros, cons, and modern alternatives.
+Google Gemini / ChatGPT: Used to generate TikZ source code for the concrete UML class diagram, regenerate inter-pattern architectural diagrams, and assist with theoretical research on C++ concurrency and optimization techniques.
 
 ## 2. Scope of AI Usage
-Visual Design & Diagram Regeneration: Provided text prompts describing structural concepts and iteratively refined image/diagram generation until the visual accurately depicted the relationships and data flow between the 3 design patterns.
-
-Theoretical Analysis & Research: Prompted AI to analyze the trade-offs, advantages, and drawbacks of the patterns in modern software development, as well as to suggest modern architectural alternatives and best practices.
-
-Proofreading & Language Refinement: Used AI to check grammar, enhance clarity, and polish the technical descriptions throughout the report and presentation slides.
+- **UML Class Diagram & Visual Formatting:** Prompted AI to generate and format the LaTeX TikZ source code for the "UML Class Diagram for Concrete Media Playlist Iterator Implementation" (featuring `TrackAggregate`, `PlaylistQueue`, `TrackIterator`, `VectorTrackIterator`, and `Client`), ensuring a professional, publication-quality vector layout.
+- **Visual Design & Diagram Regeneration:** Provided prompts to iteratively refine architectural diagrams depicting relationships and data flows between the three design patterns for seminar presentation slides.
+- **Theoretical Analysis & Research:** Prompted AI to analyze trade-offs, advantages, iterator invalidation pitfalls, and modern C++20 concurrency alternatives (`std::atomic<std::shared_ptr<T>>`).
+- **Proofreading & Language Refinement:** Used AI to check grammar, enhance clarity, and polish technical descriptions throughout the report.
 
 ## 3. Originality Statement
-I declare that the core conceptual understanding, architectural analysis, synthesis of findings, and critical evaluations in this report are entirely my own original work (take idea from origin slide from Trần Minh Khoa). AI tools were strictly utilized as assistive aids for visual drafting, brainstorming, and language refinement as described above.
+I declare that the core conceptual understanding, architectural analysis, synthesis of findings, C++ implementation logic, and critical evaluations in this report are entirely my own original work. AI tools were strictly utilized as assistive aids for visual drafting, diagram formatting, and language refinement as described above.
 
 # AI Usage Declaration
 

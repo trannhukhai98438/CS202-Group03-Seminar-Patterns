@@ -1,45 +1,99 @@
 \subsection{Proposed Solution}
 
 \subsubsection{Solution Architecture}
-The \textbf{Iterator Pattern} decouples traversal algorithms from collection data structures by extracting navigation state into an external, dedicated object known as an \textbf{Iterator}. 
+The \textbf{Iterator Pattern}~\cite{gof1994} decouples traversal algorithms from collection data structures by extracting navigation state into an external, dedicated object known as an \textbf{Iterator}. 
 
-\begin{figure}[htbp]
-\centering
-\begin{verbatim}
-+-------------------+                      +---------------------+
-|   <<Interface>>   |                      |    <<Interface>>    |
-|     Aggregate     |                      |      Iterator       |
-+-------------------+                      +---------------------+
-| +createIterator() |                      | +hasNext(): bool    |
-+---------+---------+                      | +next(): Element    |
-          ^                                +----------+----------+
-          |                                           ^
-+---------+---------+   Creates ConcreteIterator      |
-| ConcreteAggregate | - - - - - - - - - - - - - - - ->+---------+
-+-------------------+                      |  ConcreteIterator   |
-| -collectionData   |                      +---------------------+
-| +createIterator() |                      | -cursor / state     |
-+-------------------+                      | -aggregateReference |
-                                           +---------------------+
-\end{verbatim}
-\caption{Iterator Pattern Architecture}
-\label{fig:iterator_arch}
-\end{figure}
-
-The pattern establishes two primary interface hierarchies:
+The pattern establishes two primary interface hierarchies~\cite{gof1994, refactoring_guru_iterator}:
 \begin{enumerate}
     \item \textbf{Aggregate Interface (\texttt{Iterable}):} Defines a factory method (e.g., \texttt{createIterator()}) that supplies a compatible traversal cursor without revealing the internal container layout.
     \item \textbf{Iterator Interface:} Exposes a standard traversal contract—traditionally \texttt{hasNext()} and \texttt{next()}, or \texttt{first()}, \texttt{next()}, \texttt{isDone()}, and \texttt{currentItem()}.
 \end{enumerate}
 
-\subsubsection{C++ Implementation Example}
-Below is a clean implementation demonstrating an aggregate queue decoupled from its consumer via an iterator interface:
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=2.2cm and 2.5cm,
+        classbox/.style={
+            draw, 
+            rectangle, 
+            minimum width=4.4cm, 
+            minimum height=1.6cm, 
+            align=center, 
+            fill=blue!5, 
+            font=\small\sffamily
+        },
+        arrow/.style={-latex, thick},
+        dashedArrow/.style={-latex, thick, dashed},
+        inherit/.style={-{Triangle[open, length=3mm, width=3mm]}, thick}
+    ]
 
-\begin{lstlisting}[language=C++, caption={C++ Implementation of Iterator Pattern}]
+    % Aggregate Interface
+    \node (aggInt) [classbox] {
+        \textbf{\textit{<<Interface>>}}\\[1pt]
+        \textbf{\textit{TrackAggregate}}\\[2pt]
+        \rule{4.0cm}{0.4pt}\\[3pt]
+        \footnotesize+ createIterator(): unique\_ptr<TrackIterator>
+    };
+
+    % Iterator Interface
+    \node (iterInt) [classbox, right=2.0cm of aggInt] {
+        \textbf{\textit{<<Interface>>}}\\[1pt]
+        \textbf{\textit{TrackIterator}}\\[2pt]
+        \rule{4.0cm}{0.4pt}\\[3pt]
+        \footnotesize+ hasNext(): bool\\[1pt]
+        \footnotesize+ next(): const Track\&
+    };
+
+    % Concrete Aggregate
+    \node (aggConc) [classbox, below=1.8cm of aggInt, minimum height=2.2cm] {
+        \textbf{PlaylistQueue}\\[2pt]
+        \rule{4.0cm}{0.4pt}\\[3pt]
+        \footnotesize-- tracks: vector<Track>\\[1pt]
+        \rule{4.0cm}{0.4pt}\\[3pt]
+        \footnotesize+ addTrack(t: Track): void\\[1pt]
+        \footnotesize+ createIterator(): unique\_ptr<TrackIterator>
+    };
+
+    % Concrete Iterator
+    \node (iterConc) [classbox, below=1.8cm of iterInt, minimum height=2.2cm] {
+        \textbf{VectorTrackIterator}\\[2pt]
+        \rule{4.0cm}{0.4pt}\\[3pt]
+        \footnotesize-- items: const vector<Track>\&\\[1pt]
+        \footnotesize-- cursor: size\_t = 0\\[1pt]
+        \rule{4.0cm}{0.4pt}\\[3pt]
+        \footnotesize+ hasNext(): bool\\[1pt]
+        \footnotesize+ next(): const Track\&
+    };
+
+    % Client
+    \node (client) [classbox, above=1.5cm of aggInt, xshift=3.2cm, minimum height=1.2cm, fill=green!5] {
+        \textbf{Client / Consumer (\texttt{printPlaylist})}\\[2pt]
+        \rule{6.5cm}{0.4pt}\\[3pt]
+        \footnotesize+ printPlaylist(playlist: const TrackAggregate\&): void
+    };
+
+    % Connections
+    \draw[inherit] (aggConc) -- (aggInt);
+    \draw[inherit] (iterConc) -- (iterInt);
+    \draw[dashedArrow] (aggConc) -- node[above, font=\scriptsize] {creates} (iterConc);
+    \draw[dashedArrow] (iterConc) -- ++(-1.6, 0) -- node[below, font=\scriptsize, pos=0.5] {references container} ([yshift=-0.3cm]aggConc.east);
+    \draw[arrow] (client.south -| aggInt.north) -- (aggInt.north);
+    \draw[arrow] (client.south -| iterInt.north) -- (iterInt.north);
+
+    \end{tikzpicture}
+    \caption{UML Class Diagram for Concrete Media Playlist Iterator Implementation (Adapted from~\cite{viblo_iterator})}
+    \label{fig:playlist_iterator_class_diagram}
+\end{figure}
+
+\subsubsection{C++ Implementation Example}
+Below is the robust C++ implementation demonstrating the aggregate queue decoupled from its consumer via an iterator interface. Notice the defensive boundary checking inside \texttt{next()} to eliminate undefined behavior:
+
+\begin{lstlisting}[language=C++, caption={C++ Implementation of Playlist Iterator Pattern}]
 #include <iostream>
 #include <memory>
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 // Target data element
 struct Track {
@@ -82,6 +136,9 @@ private:
         }
 
         const Track& next() override {
+            if (!hasNext()) {
+                throw std::out_of_range("VectorTrackIterator::next(): Iterator out of bounds.");
+            }
             return items[cursor++];
         }
     };
@@ -103,7 +160,7 @@ void printPlaylist(const TrackAggregate& playlist) {
     while (it->hasNext()) {
         const Track& t = it->next();
         std::cout << index++ << ". " << t.title 
-        << " by " << t.artist << "\n";
+                  << " by " << t.artist << "\n";
     }
 }
 \end{lstlisting}

@@ -4,7 +4,7 @@
 
 \paragraph{Advantages}
 \begin{itemize}
-    \item \textbf{Strict Encapsulation:} Client code never accesses the internal node pointers or collection arrays directly.
+    \item \textbf{Strict Encapsulation:} Client code never accesses the internal node pointers or collection arrays directly~\cite{gof1994}.
     \item \textbf{Single Responsibility Principle:} Traversal logic and cursor bookkeeping are isolated inside the iterator class, keeping the container focused solely on data storage.
     \item \textbf{Open/Closed Principle:} New data structures or alternative traversal strategies (e.g., filtered, reverse, or breadth-first) can be added without modifying existing consumer loops.
     \item \textbf{Independent Concurrent Traversals:} Because each iterator maintains its own cursor state, multiple independent traversals can run across the same underlying container simultaneously.
@@ -14,13 +14,21 @@
 \paragraph{Disadvantages}
 \begin{itemize}
     \item \textbf{Over-Engineering for Simple Needs:} Implementing polymorphic interfaces, factory methods, and custom iterator classes introduces unnecessary complexity for simple, fixed-size structures.
-    \item \textbf{Indirection Overhead:} Virtual function dispatch and dynamic memory allocations (\texttt{new} / \texttt{std::make\_unique}) introduce minor CPU and heap overhead compared to native index loops.
+    \item \textbf{Indirection Overhead:} Virtual function dispatch and dynamic memory allocations (\texttt{new} / \texttt{std::make\_unique}) introduce CPU and heap overhead compared to native index loops~\cite{stroustrup2013}.
+\end{itemize}
+
+\subsubsection{Iterator Invalidation and Object Lifetime Pitfalls}
+In native C++, memory safety and object lifetimes are critical considerations when implementing custom iterators~\cite{stroustrup2013, meyers2014}:
+\begin{itemize}
+    \item \textbf{Dangling References / Lifetime Discrepancy:} A concrete iterator typically retains a raw reference (e.g., \texttt{const std::vector<Track>\&}) or a pointer to the aggregate container. If the aggregate object's lifetime ends before the iterator is destroyed (for example, if the aggregate was created as a temporary rvalue and discarded), subsequent calls to \texttt{hasNext()} or \texttt{next()} will dereference dangling memory, resulting in undefined behavior.
+    \item \textbf{Structural Mutation during Traversal:} If the underlying container is structurally modified (e.g., inserting or appending elements via \texttt{push\_back()}) while an iterator is actively traversing it, \texttt{std::vector} may trigger internal heap reallocation~\cite{stroustrup2013}. This moves the underlying buffer to a new memory address, invalidating any active pointers or indices held by external iterators.
+    \item \textbf{Architectural Mitigations:} To safeguard against invalidation in production systems, engineers can: (1) enforce strict scoped iteration where container lifetimes strictly enclose iterator lifetimes, (2) share ownership via \texttt{std::shared\_ptr<const Container>}, or (3) adopt snapshot-based iterators.
 \end{itemize}
 
 \subsubsection{High-Performance Optimization Techniques in C++}
 
 \paragraph{Zero-Cost Abstractions and Stack-Allocated Iterators}
-In performance-critical C++, virtual method calls and heap allocation can be bypassed entirely by utilizing stack-allocated value types that satisfy the C++ standard range idiom (\texttt{begin()} and \texttt{end()}):
+In performance-critical C++, virtual method calls and heap allocation can be bypassed entirely by utilizing stack-allocated value types that satisfy the C++ standard range idiom (\texttt{begin()} and \texttt{end()})~\cite{stroustrup2013, meyers2014}:
 
 \begin{lstlisting}[language=C++, caption={Zero-Cost Stack-Allocated Iterator in C++}]
 class HighPerformanceBuffer {
@@ -69,8 +77,8 @@ public:
 };
 \end{lstlisting}
 
-\subsubsection{Concurrency and Mutation Handling}
-Modifying a collection while an iterator is actively traversing it leads to race conditions, invalid iterators, or exceptions. Table~\ref{tab:thread_safe_iteration} contrasts standard synchronization techniques:
+\subsubsection{Concurrency, Mutation Handling, and C++ Standards}
+Modifying a collection while an iterator is actively traversing it leads to race conditions, invalid iterators, or data races~\cite{williams2019}. Table~\ref{tab:thread_safe_iteration} contrasts standard synchronization techniques:
 
 \begin{table}[htbp]
 \centering
@@ -79,40 +87,38 @@ Modifying a collection while an iterator is actively traversing it leads to race
 \begin{tabular}{@{}p{3.6cm} p{4cm} p{3.8cm} p{3.2cm}@{}}
 \toprule
 \textbf{Technique} & \textbf{Mechanism} & \textbf{Advantages} & \textbf{Disadvantages} \\ \midrule
-\textbf{Shared Mutex} (\texttt{std::shared\_mutex}) & Uses shared locks for reading/iteration; exclusive locks for writing. & Simple; minimal memory overhead. & High read load can starve pending write operations. \\ \midrule
+\textbf{Shared Mutex} (\texttt{std::shared\_mutex}) & Uses shared locks for reading/iteration; exclusive locks for writing~\cite{williams2019}. & Simple; minimal memory overhead. & High read load can starve pending write operations. \\ \midrule
 \textbf{Defensive Snapshot} & Iterator duplicates the underlying collection at creation time. & Eliminates reader-writer conflicts completely. & Allocation and copying overhead proportional to collection size. \\ \midrule
-\textbf{Atomic Pointer Swap (Copy-on-Write)} & Traversals read an immutable shared snapshot; writes clone and atomically swap pointers. & 100\% lock-free traversal at native CPU cache speed. & High write-amplification cost on frequent updates. \\ \bottomrule
+\textbf{Atomic Pointer Swap (Copy-on-Write)} & Traversals read an immutable shared snapshot; writes clone and atomically swap pointers~\cite{williams2019, iso_cpp20}. & Non-blocking read traversal; reader threads never block on writer threads. & Lock-free capability is implementation-defined; write-amplification cost. \\ \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{lstlisting}[language=C++, caption={Lock-Free Snapshot Traversal with Atomic Pointer Swap}]
+\begin{lstlisting}[language=C++, caption={Copy-on-Write Snapshot Traversal in C++20}]
 #include <iostream>
 #include <vector>
 #include <memory>
 #include <atomic>
 
+// Note: std::atomic<std::shared_ptr<T>> is standardized in C++20 (ISO/IEC 14882:2020).
+// In C++11/C++14/C++17, the equivalent was std::atomic_load/store free functions.
 class LockFreeTrackCatalog {
 private:
-    std::atomic<std::shared_ptr<const std::vector<Track>>> 
-        catalog_ptr;
+    std::atomic<std::shared_ptr<const std::vector<Track>>> catalog_ptr;
 
 public:
     LockFreeTrackCatalog() {
-        catalog_ptr.store(std::make_shared<const        
-            std::vector<Track>>());
+        catalog_ptr.store(std::make_shared<const std::vector<Track>>());
     }
 
-    // Lock-free read traversal: completely 
-    // immune to concurrent writes
+    // Read traversal: readers acquire an immutable snapshot without locking mutexes.
     void traverse() const {
-        std::shared_ptr<const std::vector<Track>> 
-            snapshot = catalog_ptr.load();
+        std::shared_ptr<const std::vector<Track>> snapshot = catalog_ptr.load();
         for (const auto& track : *snapshot) {
             std::cout << track.title << "\n";
         }
     }
 
-    // Write operation using atomic compare-and-swap
+    // Write operation using atomic compare-and-swap (CAS)
     void addTrack(const Track& track) {
         std::shared_ptr<const std::vector<Track>> old_data;
         std::shared_ptr<const std::vector<Track>> new_data;
@@ -124,5 +130,14 @@ public:
             new_data = copy;
         } while (!catalog_ptr.compare_exchange_weak(old_data, new_data));
     }
+
+    // Utility to verify platform lock-free guarantee at runtime
+    bool checkLockFree() const {
+        return catalog_ptr.is_lock_free();
+    }
 };
 \end{lstlisting}
+
+\begin{quote}
+\small \textbf{Important ISO C++ Standard Note (Lock-Freedom):} According to the C++ Working Draft~\cite{iso_cpp20, williams2019}, whether \texttt{std::atomic<std::shared\_ptr<T>>} is strictly lock-free on a given platform is \textbf{implementation-defined}. It relies on hardware support for double-word compare-and-swap (DWCAS / \texttt{CMPXCHG16B}) or small internal table-based locks. Developers can check \texttt{catalog\_ptr.is\_lock\_free()} at runtime or query \texttt{std::atomic<std::shared\_ptr<T>>::is\_always\_lock\_free} at compile time.
+\end{quote}

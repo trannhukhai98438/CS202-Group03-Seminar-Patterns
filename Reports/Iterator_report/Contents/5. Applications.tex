@@ -1,5 +1,7 @@
 \subsection{Applications}
 
+The Iterator pattern is extensively utilized across modern software engineering and systems programming to provide unified, decoupled traversal across heterogeneous data structures and streaming resources~\cite{gof1994, refactoring_guru_iterator}:
+
 \begin{itemize}
     \item \textbf{Hierarchical DOM Traversal:} Modern web rendering engines use iterators to traverse recursive DOM trees without exposing internal node linkage.
     \item \textbf{Infinite Scrolling and Pagination:} Mobile and web feeds leverage iterators to paginate remote API data on demand, keeping RAM usage low.
@@ -15,15 +17,15 @@
 \label{tab:iterator_vs_visitor}
 \begin{tabular}{@{}p{3.5cm} p{5.5cm} p{5.5cm}@{}}
 \toprule
-\textbf{Dimension} & \textbf{Iterator Pattern} & \textbf{Visitor Pattern} \\ \midrule
-\textbf{Core Objective} & Access and sequence traversal without exposing internals. & Adding new operations to class hierarchies without modifying their code. \\ \midrule
-\textbf{Target Elements} & Homogeneous data structures. & Heterogeneous object hierarchies. \\ \midrule
-\textbf{Dispatch Model} & Single dispatch (\texttt{it->next()}). & Double dispatch (\texttt{node->accept(visitor)}). \\ \midrule
-\textbf{Control Flow} & External (driven by client loop). & Internal (driven by structural traversal). \\ \bottomrule
+\textbf{Dimension} & \textbf{Iterator Pattern}~\cite{gof1994} & \textbf{Visitor Pattern}~\cite{gof1994} \\ \midrule
+\textbf{Core Objective} & Access and sequence traversal without exposing container internals. & Adding new operations to class hierarchies without modifying their source code. \\ \midrule
+\textbf{Target Elements} & Primarily homogeneous or structured collections. & Heterogeneous object structures and composite hierarchies. \\ \midrule
+\textbf{Dispatch Model} & Single dispatch (\texttt{it->next()}). & Double dispatch (\texttt{element->accept(visitor)}). \\ \midrule
+\textbf{Traversal Control} & Explicitly driven by the Iterator cursor and client consumption loop. & Unconstrained by the pattern; traversal can be delegated to the Object Structure, an Iterator, or the Visitor itself. \\ \bottomrule
 \end{tabular}
 \end{table}
 
-\noindent \textbf{Synergy:} An Iterator can traverse a complex composite hierarchy sequentially, passing each node to a Visitor that executes polymorphic operations without altering the tree structure.
+\noindent \textbf{Synergy:} An Iterator can traverse a complex composite hierarchy sequentially, passing each node to a Visitor that executes polymorphic operations without altering the tree structure~\cite{gof1994}.
 
 \paragraph{Iterator vs. Chain of Responsibility}
 
@@ -33,7 +35,7 @@
 \label{tab:iterator_vs_cor}
 \begin{tabular}{@{}p{3.5cm} p{5.5cm} p{5.5cm}@{}}
 \toprule
-\textbf{Dimension} & \textbf{Iterator Pattern} & \textbf{Chain of Responsibility Pattern} \\ \midrule
+\textbf{Dimension} & \textbf{Iterator Pattern}~\cite{gof1994} & \textbf{Chain of Responsibility Pattern}~\cite{gof1994} \\ \midrule
 \textbf{Core Objective} & Traverses elements sequentially across a collection without exposing its internal structure. & Passes a request along a dynamic chain of potential handlers until one processes it. \\ \midrule
 \textbf{Flow Control} & Sequential and deterministic; visits every element in order unless explicitly terminated by the client. & Conditional and delegated; execution passes down the handler link until a condition or termination criteria is met. \\ \midrule
 \textbf{Decoupling Target} & Decouples the consumer algorithm from the underlying data structure layout. & Decouples the sender of a request from its potential receivers/handlers. \\ \midrule
@@ -42,7 +44,7 @@
 \end{table}
 
 \noindent \textbf{Synergy (Processing Pipelines):}
-The two patterns frequently collaborate in data processing pipelines, middleware stacks, and stream filtration:
+The two patterns frequently collaborate in data processing pipelines, middleware stacks, and stream filtration~\cite{refactoring_guru_iterator}:
 \begin{itemize}
     \item The \textbf{Iterator} acts as the \textit{data source pump}, fetching items one-by-one from complex, memory-efficient data structures without exposing internal node layouts.
     \item The \textbf{Chain of Responsibility} acts as the \textit{processing pipeline}, routing each item produced by the iterator through a series of discrete, loosely coupled validation, filtering, or transformation stages.

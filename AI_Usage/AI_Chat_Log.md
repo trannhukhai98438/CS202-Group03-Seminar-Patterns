@@ -41,6 +41,23 @@
 
 ---
 
+### Log 3: UML Class Diagram Generation in TikZ
+
+**Tool:** Google Gemini
+
+**Date:** August 29, 2026
+
+**Prompt:**
+> "I have a concrete C++ implementation of the Iterator pattern for a Media Playlist Queue (including `Track`, `TrackAggregate`, `PlaylistQueue`, `TrackIterator`, `VectorTrackIterator`, and `Client printPlaylist`). Please generate a clean, professional, and visually appealing UML Class Diagram in LaTeX TikZ format to replace plain ASCII art. Use proper class box styling, member method visibility (+/-), inheritance arrows, and dependency dashed arrows."
+
+**AI Response:**
+> "Here is the complete LaTeX TikZ code representing the UML Class Diagram for the Concrete Media Playlist Iterator Implementation. It defines styled node boxes with clear compartments for attributes and methods, standard inheritance triangles pointing to interfaces, and directional dependency arrows connecting `PlaylistQueue`, `VectorTrackIterator`, and `Client`."
+
+**Purpose and how used responsed answer:**
+> "Used AI to design and render the high-resolution vector TikZ diagram in LaTeX for the 'UML Class Diagram for Concrete Media Playlist Iterator Implementation', replacing ASCII text with a publication-quality diagram."
+
+---
+
 # AI Chat Logs
 
 **Student Name:** Trần Như Khải
