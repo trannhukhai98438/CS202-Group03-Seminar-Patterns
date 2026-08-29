@@ -1,19 +1,20 @@
 # AI Usage Declaration
 
 **Student Name:** Đỗ Viết Hoàng Long
-**Student ID:** [MSSV]  
+**Student ID:** 25125024
 
 ## 1. Tools Used
-- Google Gemini: Used for [mục đích, vd: clarifying graph pathfinding concepts].
-- GitHub Copilot: Used for [mục đích, vd: auto-completing boilerplate code].
+Google Gemini / ChatGPT: Used to regenerate the diagram illustrating the relationship between the 3 design patterns, as well as to research theoretical pros, cons, and modern alternatives.
 
 ## 2. Scope of AI Usage
-- **Drafting & Brainstorming:** Used AI to suggest the outline for the academic report.
-- **Coding Assistance:** Prompted AI to explain edge cases in [tên thuật toán/tính năng] and suggest debugging approaches for memory leaks in C++.
-- **Proofreading:** Used AI to check grammar and improve sentence flow in the LaTeX document.
+Visual Design & Diagram Regeneration: Provided text prompts describing structural concepts and iteratively refined image/diagram generation until the visual accurately depicted the relationships and data flow between the 3 design patterns.
+
+Theoretical Analysis & Research: Prompted AI to analyze the trade-offs, advantages, and drawbacks of the patterns in modern software development, as well as to suggest modern architectural alternatives and best practices.
+
+Proofreading & Language Refinement: Used AI to check grammar, enhance clarity, and polish the technical descriptions throughout the report and presentation slides.
 
 ## 3. Originality Statement
-I declare that the core conceptual design, primary algorithm implementation, and critical analysis in this report are entirely my own original work. AI was strictly used as an assistive tool as outlined above.
+I declare that the core conceptual understanding, architectural analysis, synthesis of findings, and critical evaluations in this report are entirely my own original work (take idea from origin slide from Trần Minh Khoa). AI tools were strictly utilized as assistive aids for visual drafting, brainstorming, and language refinement as described above.
 
 # AI Usage Declaration
 
