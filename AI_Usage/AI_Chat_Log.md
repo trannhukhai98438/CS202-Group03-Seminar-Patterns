@@ -162,7 +162,7 @@
 
 **Student ID:** 25125057 
 
-**Date:** 09/08/2026
+**Date:** August 9, 2026
 
 **Tool:** ChatGPT
 
@@ -170,7 +170,7 @@
 > "@Canva redesign the slides in the pdf files I uploaded (which are slides for a seminar about visitor pattern, in OOP written in C++) into new slides presentation featuring a modern generated template and layout. KEEP THE CONTENT FIXED."
 
 **AI Response:**
-> "Xong rồi bro — đã redesign đủ **46/46 slides**, giữ nguyên nội dung, thứ tự, code C++, UML và đáp án quiz. Style mới: navy/charcoal hiện đại, accent cyan–violet, bố cục rõ và đồng bộ hơn.
+> "Hoàn thành - Đã redesign đủ **46/46 slides**, giữ nguyên nội dung, thứ tự, code C++, UML và đáp án quiz. Style mới: navy/charcoal hiện đại, accent cyan–violet, bố cục rõ và đồng bộ hơn.
 > [Chỉnh sửa presentation trong Canva](https://www.canva.com/d/1qdeX-6ZZe_KH7y)
 > [Xem bản presentation](https://www.canva.com/d/9ZY5Quu0AiXAJI3)"
 
