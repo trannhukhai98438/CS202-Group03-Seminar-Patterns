@@ -1,65 +1,126 @@
-# AI Usage Declaration
+# Group AI Usage Declaration
 
-**Student Name:** Đỗ Viết Hoàng Long
-**Student ID:** 25125024
+## Project Information
 
-## 1. Tools Used
-Google Gemini / ChatGPT: Used to generate TikZ source code for the concrete UML class diagram, regenerate inter-pattern architectural diagrams, and assist with theoretical research on C++ concurrency and optimization techniques.
+- **Course:** CS202 — Programming Systems
+- **Project:** Design Patterns Seminar
+- **Group:** Group 03
+- **Design patterns covered:** Chain of Responsibility, Iterator, and Visitor
 
-## 2. Scope of AI Usage
-- **UML Class Diagram & Visual Formatting:** Prompted AI to generate and format the LaTeX TikZ source code for the "UML Class Diagram for Concrete Media Playlist Iterator Implementation" (featuring `TrackAggregate`, `PlaylistQueue`, `TrackIterator`, `VectorTrackIterator`, and `Client`), ensuring a professional, publication-quality vector layout.
-- **Visual Design & Diagram Regeneration:** Provided prompts to iteratively refine architectural diagrams depicting relationships and data flows between the three design patterns for seminar presentation slides.
-- **Theoretical Analysis & Research:** Prompted AI to analyze trade-offs, advantages, iterator invalidation pitfalls, and modern C++20 concurrency alternatives (`std::atomic<std::shared_ptr<T>>`).
-- **Proofreading & Language Refinement:** Used AI to check grammar, enhance clarity, and polish technical descriptions throughout the report.
+## Group Members
 
-## 3. Originality Statement
-I declare that the core conceptual understanding, architectural analysis, synthesis of findings, C++ implementation logic, and critical evaluations in this report are entirely my own original work. AI tools were strictly utilized as assistive aids for visual drafting, diagram formatting, and language refinement as described above.
+| Full Name | Student ID |
+|---|---:|
+| Đỗ Viết Hoàng Long | 25125024 |
+| Trần Như Khải | 25125045 |
+| Trần Đăng Khoa | 25125056 |
+| Trần Minh Khoa | 25125057 |
 
-# AI Usage Declaration
+## Group-Level Summary
 
-**Student Name:** Trần Như Khải
-**Student ID:** 25125045
+The group used ChatGPT and Google Gemini as assistive tools during the preparation of selected seminar materials. The reported uses included structural brainstorming, academic-language refinement, LaTeX and Beamer formatting, TikZ/UML generation, benchmark-methodology consultation, theoretical research, architectural-diagram generation, and presentation redesign through Canva.
 
-## 1. Tools Used
-- ChatGPT: Used for referencing the structure and outline of an academic seminar report for the Visitor pattern.
-- Google Gemini: Used for refining the text into a formal academic report style, writing LaTeX code based on provided content, and designing the performance evaluation benchmark.
+AI-generated material was not treated as an authoritative academic source. Group members reviewed and adapted the outputs relevant to their assigned work and retained responsibility for the submitted reports, presentations, diagrams, source code, benchmark results, citations, and technical interpretations. The significant AI interactions reported by the members are documented in `AI_Chat_Log.md`.
 
-## 2. Scope of AI Usage
-- **Drafting & Brainstorming:** Used ChatGPT to suggest a professional structural flow and outline for the Visitor pattern seminar report.
-- **Coding Assistance:** Prompted Gemini to write and format LaTeX code for the document structure, and to design the C++ benchmarking framework for evaluating dispatching overhead.
-- **Proofreading:** Used Gemini to check grammar, improve sentence flow, and elevate the writing into a formal academic tone.
+---
 
-## 3. Originality Statement
-I declare that the core conceptual design, primary algorithm implementation, and critical analysis in this report are entirely my own original work. AI was strictly used as an assistive tool as outlined above.
+## Individual Declaration — Đỗ Viết Hoàng Long
 
-# AI Usage Declaration
+- **Student ID:** 25125024
+- **AI tools used:** Google Gemini and ChatGPT
+- **Relevant work:** Iterator report diagrams, cross-pattern visuals, theoretical analysis, and language refinement
 
-**Student Name:** Trần Đăng Khoa
-**Student ID:** 25125056  
+### Scope of AI Assistance
 
-## 1. Tools Used
-- Google Gemini: Used for generating LaTeX code for the Chain of Responsibility pattern slide report.
+AI was used to:
 
-## 2. Scope of AI Usage
-- **Drafting & Brainstorming:** Used AI to suggest the outline for the academic report.
-- **LaTeX Code Generation:** Prompted AI to write Beamer/LaTeX source code for formatting slide layouts, structuring bullet points, and rendering UML diagrams.
-- **Proofreading:** Used AI to check English grammar, refine technical descriptions, and improve text flow within the slide deck.
+- generate and format LaTeX TikZ source for the concrete UML class diagram of the Media Playlist Iterator implementation, including `Track`, `TrackAggregate`, `PlaylistQueue`, `TrackIterator`, `VectorTrackIterator`, and the client operation `printPlaylist`;
+- generate and iteratively refine architectural diagrams illustrating relationships and data flow among the design patterns discussed in the seminar;
+- support research and brainstorming about Iterator trade-offs, iterator invalidation, optimization considerations, and modern C++20 concurrency alternatives such as `std::atomic<std::shared_ptr<T>>`; and
+- proofread technical descriptions, improve clarity, and refine language in the report and presentation materials.
 
-## 3. Originality Statement
-I declare that the core conceptual design, primary algorithm implementation, and critical analysis in this report are entirely my own original work. AI was strictly used as an assistive tool as outlined above.
+### Human Contribution and Review
 
-# AI Usage Declaration
+The member supplied the implementation context and diagram requirements, selected the concepts to be represented, and reviewed and revised generated material before integration. The member remained responsible for the conceptual understanding, C++ implementation logic, synthesis of findings, architectural analysis, and final technical evaluation.
 
-**Student Name:** Trần Minh Khoa
-**Student ID:** 25125057
+### Declaration
 
-## 1. Tools Used
-- ChatGPT: Used for redesigning the Canva slide into a new slide featuring a modern, AI-generated template and layout.
+I confirm that the description above accurately represents my use of AI in this project. AI was used as an assistive tool for visual drafting, TikZ/UML formatting, research support, and language refinement. I reviewed the incorporated outputs and remain responsible for my submitted contributions.
 
-## 2. Scope of AI Usage
-- **Drafting & Brainstorming:** Used AI to brainstorm a modern visual direction for the presentation, including the color scheme, typography, slide layouts, and overall design consistency.
-- **Coding Assistance:** No AI assistance was used to create or modify the C++ code presented in the slides. AI was used only to improve the visual presentation of existing code and UML diagrams.
-- **Proofreading:** Used AI to review the slides for visual readability, text placement, consistency, and formatting. The original wording and technical content were kept unchanged.
+---
 
-## 3. Originality Statement
-I declare that the presentation’s academic content, explanations, C++ code, examples, UML diagrams, quizzes, and technical analysis are my own original work. AI was used solely as an assistive design tool to modernize the presentation’s template, layout, colors, typography, and visual organization without changing its original content.
+## Individual Declaration — Trần Như Khải
+
+- **Student ID:** 25125045
+- **AI tools used:** ChatGPT and Google Gemini
+- **Relevant work:** Visitor pattern seminar report and performance benchmark
+
+### Scope of AI Assistance
+
+AI was used to:
+
+- suggest an initial structure and section order for an academic seminar report on the Visitor pattern;
+- review author-provided outlines and draft content;
+- refine selected text into formal academic English;
+- generate or format LaTeX based on the supplied content; and
+- provide methodological suggestions for a C++ micro-benchmark comparing Visitor implementations, including avoiding console I/O in the timed region and retaining an observable result to reduce the risk of dead-code elimination.
+
+### Human Contribution and Review
+
+The member supplied the subject matter, selected and organized the report content, adapted the suggested structure, implemented the relevant C++ work, and reviewed the resulting LaTeX and technical discussion. AI suggestions concerning benchmark design were evaluated and adapted before use. The member remained responsible for the implementation, reported measurements, sources, interpretations, and final technical accuracy.
+
+### Declaration
+
+I confirm that the description above accurately represents my use of AI in this project. AI was used as an assistive tool for outlining, language refinement, LaTeX formatting, and benchmark-methodology consultation. I reviewed the incorporated outputs and remain responsible for my submitted contributions.
+
+---
+
+## Individual Declaration — Trần Đăng Khoa
+
+- **Student ID:** 25125056
+- **AI tool used:** Google Gemini
+- **Relevant work:** Chain of Responsibility seminar presentation and benchmark methodology
+
+### Scope of AI Assistance
+
+AI was used to:
+
+- suggest an outline and logical slide order for the Chain of Responsibility seminar presentation;
+- refine draft explanations into formal academic English;
+- generate and format LaTeX Beamer code for slide structures, frames, bullet points, and layouts;
+- assist with the presentation of UML diagrams and technical material; and
+- suggest benchmark-design considerations for measuring request-handling and pass-through overhead while reducing distortion from I/O and compiler optimization.
+
+### Human Contribution and Review
+
+The member supplied and selected the technical content, organized the presentation, reviewed the generated Beamer code, and adapted the benchmark suggestions to the project context. The member remained responsible for the conceptual explanation, code, diagrams, analysis, and final presentation materials.
+
+### Declaration
+
+I confirm that the description above accurately represents my use of AI in this project. AI was used as an assistive tool for outlining, language refinement, Beamer formatting, and benchmark-methodology consultation. I reviewed the incorporated outputs and remain responsible for my submitted contributions.
+
+---
+
+## Individual Declaration — Trần Minh Khoa
+
+- **Student ID:** 25125057
+- **AI tool used:** ChatGPT with Canva integration
+- **Relevant work:** Visual redesign of the Visitor pattern presentation
+
+### Scope of AI Assistance
+
+AI was used to redesign the existing Visitor presentation with a modern visual template and layout. The assistance covered the proposed color scheme, typography, slide composition, visual consistency, text placement, and presentation of existing code and UML material.
+
+### Human Contribution and Review
+
+The original presentation content, explanations, C++ code, examples, UML diagrams, quiz material, and technical analysis were retained. AI was not used by this member to create or modify the C++ code shown in the slides. The member reviewed the redesigned slides for readability, consistency, formatting, and preservation of the original content.
+
+### Declaration
+
+I confirm that the description above accurately represents my use of AI in this project. AI was used as an assistive visual-design tool to modernize the presentation without intentionally changing its academic or technical content. I reviewed the resulting presentation and remain responsible for my submitted contributions.
+
+---
+
+## Final Group Declaration
+
+We confirm that this document provides a good-faith account of the AI assistance reported by the four group members. The associated significant prompts, response excerpts or summaries, and descriptions of how the outputs were used are recorded in `AI_Chat_Log.md`. Each member reviewed their own contributions and accepts responsibility for the accuracy, integrity, and appropriate attribution of the final submitted work.
