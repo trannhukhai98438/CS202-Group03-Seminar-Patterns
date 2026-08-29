@@ -64,9 +64,9 @@ While the naive approach appears straightforward initially, it introduces critic
 \begin{itemize}
     \item \textbf{Violation of the Single Responsibility Principle (SRP):} Forcing business logic classes to implement unrelated operations bloats the entities with orthogonal concerns. For instance, a shape class should not be burdened with the responsibility of saving data to external file.
     
-    \item \textbf{Violation of the Open/Closed Principle (OCP):} Every time a new operation is introduced, the core base class and all its derived classes must be modified. The system is fundamentally ``open for modification,'' making the codebase brittle and prone to regression bugs.
+    \item \textbf{Violation of the Open/Closed Principle (OCP):} Every time a new operation is introduced, the core base class and all its derived classes must be modified. The system is fundamentally ``open for modification,'' making the codebase brittle and prone to regression bugs \cite{gof1994}.
     
-    \item \textbf{Recompilation Cascade and ABI Breakage:} This is a severe operational issue in C++. Modifying a base class header by adding new virtual functions alters the Virtual Method Table (\texttt{vtable}) layout, thereby breaking Application Binary Interface (ABI) compatibility. Consequently, every translation unit that includes the modified header must be recompiled, drastically increasing build times in large-scale projects.
+    \item \textbf{Recompilation Cascade and ABI Breakage:} This is a severe operational issue in C++. Modifying a base class header by adding new virtual functions alters the Virtual Method Table (\texttt{vtable}) layout, thereby breaking Application Binary Interface (ABI) compatibility. Consequently, every translation unit that includes the modified header must be recompiled, drastically increasing build times in large-scale projects \cite{iglberger2022}.
     
     \item \textbf{Restricted Source Code Accessibility:} In many practical scenarios, developers integrate third-party libraries, legacy codebases, or compiled SDKs. In such instances, modifying the original class structures is strictly prohibited or physically impossible due to a lack of source code access or organizational permissions.
 \end{itemize}

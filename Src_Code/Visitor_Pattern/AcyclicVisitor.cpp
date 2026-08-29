@@ -1,20 +1,18 @@
 #include <iostream>
 #include <memory>
+#include <ostream>
 #include <vector>
-
-class Circle;
-class Rectangle;
 
 class AbstractVisitor {
 public:
     virtual ~AbstractVisitor() = default;
 };
 
-template <typename ShapeType>
+template <typename Element>
 class Visitor {
 public:
     virtual ~Visitor() = default;
-    virtual void visit(const ShapeType& shape) = 0;
+    virtual void visit(const Element& element) = 0;
 };
 
 class Shape {
@@ -26,11 +24,11 @@ public:
 class Circle final : public Shape {
 public:
     explicit Circle(double radius) : radius_(radius) {}
+    double radius() const { return radius_; }
 
-    double area() const { return 3.1415926535 * radius_ * radius_; }
     void accept(AbstractVisitor& visitor) const override {
-        if (auto* circle_visitor = dynamic_cast<Visitor<Circle>*>(&visitor)) {
-            circle_visitor->visit(*this);
+        if (auto* target = dynamic_cast<Visitor<Circle>*>(&visitor)) {
+            target->visit(*this);
         }
     }
 
@@ -40,12 +38,14 @@ private:
 
 class Rectangle final : public Shape {
 public:
-    Rectangle(double width, double height) : width_(width), height_(height) {}
+    Rectangle(double width, double height)
+        : width_(width), height_(height) {}
+    double width() const { return width_; }
+    double height() const { return height_; }
 
-    double area() const { return width_ * height_; }
     void accept(AbstractVisitor& visitor) const override {
-        if (auto* rectangle_visitor = dynamic_cast<Visitor<Rectangle>*>(&visitor)) {
-            rectangle_visitor->visit(*this);
+        if (auto* target = dynamic_cast<Visitor<Rectangle>*>(&visitor)) {
+            target->visit(*this);
         }
     }
 
@@ -54,27 +54,32 @@ private:
     double height_;
 };
 
-class AreaVisitor final : public AbstractVisitor,
+class SaveVisitor final : public AbstractVisitor,
                           public Visitor<Circle>,
                           public Visitor<Rectangle> {
 public:
-    void visit(const Circle& circle) override { total_area += circle.area(); }
-    void visit(const Rectangle& rectangle) override { total_area += rectangle.area(); }
+    explicit SaveVisitor(std::ostream& output) : output_(output) {}
 
-    double total_area = 0.0;
+    void visit(const Circle& circle) override {
+        output_ << "<circle radius=\"" << circle.radius() << "\"/>\n";
+    }
+
+    void visit(const Rectangle& rectangle) override {
+        output_ << "<rectangle width=\"" << rectangle.width()
+                << "\" height=\"" << rectangle.height() << "\"/>\n";
+    }
+
+private:
+    std::ostream& output_;
 };
 
 int main() {
     std::vector<std::unique_ptr<Shape>> shapes;
-    shapes.push_back(std::make_unique<Circle>(2.0));
-    shapes.push_back(std::make_unique<Rectangle>(3.0, 4.0));
+    shapes.push_back(std::make_unique<Circle>(5.0));
+    shapes.push_back(std::make_unique<Rectangle>(4.0, 6.0));
 
-    AreaVisitor visitor;
+    SaveVisitor save(std::cout);
     for (const auto& shape : shapes) {
-        shape->accept(visitor);
+        shape->accept(save);
     }
-
-    std::cout << "Acyclic Visitor\n";
-    std::cout << "Total area: " << visitor.total_area << '\n';
-    return 0;
 }

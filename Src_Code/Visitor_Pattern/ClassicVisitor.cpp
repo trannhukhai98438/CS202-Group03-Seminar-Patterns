@@ -1,5 +1,6 @@
 #include <iostream>
 #include <memory>
+#include <ostream>
 #include <vector>
 
 class Circle;
@@ -21,8 +22,7 @@ public:
 class Circle final : public Shape {
 public:
     explicit Circle(double radius) : radius_(radius) {}
-
-    double area() const { return 3.1415926535 * radius_ * radius_; }
+    double radius() const { return radius_; }
     void accept(Visitor& visitor) const override { visitor.visit(*this); }
 
 private:
@@ -31,9 +31,10 @@ private:
 
 class Rectangle final : public Shape {
 public:
-    Rectangle(double width, double height) : width_(width), height_(height) {}
-
-    double area() const { return width_ * height_; }
+    Rectangle(double width, double height)
+        : width_(width), height_(height) {}
+    double width() const { return width_; }
+    double height() const { return height_; }
     void accept(Visitor& visitor) const override { visitor.visit(*this); }
 
 private:
@@ -41,25 +42,30 @@ private:
     double height_;
 };
 
-class AreaVisitor final : public Visitor {
+class SaveVisitor final : public Visitor {
 public:
-    void visit(const Circle& circle) override { total_area += circle.area(); }
-    void visit(const Rectangle& rectangle) override { total_area += rectangle.area(); }
+    explicit SaveVisitor(std::ostream& output) : output_(output) {}
 
-    double total_area = 0.0;
+    void visit(const Circle& circle) override {
+        output_ << "<circle radius=\"" << circle.radius() << "\"/>\n";
+    }
+
+    void visit(const Rectangle& rectangle) override {
+        output_ << "<rectangle width=\"" << rectangle.width()
+                << "\" height=\"" << rectangle.height() << "\"/>\n";
+    }
+
+private:
+    std::ostream& output_;
 };
 
 int main() {
     std::vector<std::unique_ptr<Shape>> shapes;
-    shapes.push_back(std::make_unique<Circle>(2.0));
-    shapes.push_back(std::make_unique<Rectangle>(3.0, 4.0));
+    shapes.push_back(std::make_unique<Circle>(5.0));
+    shapes.push_back(std::make_unique<Rectangle>(4.0, 6.0));
 
-    AreaVisitor visitor;
+    SaveVisitor save(std::cout);
     for (const auto& shape : shapes) {
-        shape->accept(visitor);
+        shape->accept(save);
     }
-
-    std::cout << "Classic Visitor\n";
-    std::cout << "Total area: " << visitor.total_area << '\n';
-    return 0;
 }

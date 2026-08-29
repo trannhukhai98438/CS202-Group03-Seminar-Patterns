@@ -2,7 +2,7 @@
 \label{sec:proposed_solution}
 
 \subsection{Structural Overview}
-The Visitor design pattern is strategically proposed to resolve the architectural limitations highlighted in the previous section. It achieves this by extracting the newly required operations from the base class hierarchy and encapsulating them within a distinct ``Visitor'' object. This decoupling ensures that the primary element classes remain relatively stable and strictly adhere to the Open/Closed Principle.
+The Visitor design pattern is strategically proposed to resolve the architectural limitations highlighted in the previous section. It achieves this by extracting the newly required operations from the base class hierarchy and encapsulating them within a distinct ``Visitor'' object. This decoupling ensures that the primary element classes remain relatively stable and strictly adhere to the Open/Closed Principle \cite{gof1994}.
 
 % PLACEHOLDER FOR CLASS DIAGRAM
 \begin{figure}[H]
@@ -37,7 +37,7 @@ public:
 \end{lstlisting}
 
 \subsection{The Core Mechanism: Double Dispatch}
-At its core, the Visitor pattern leverages the concept of \textit{Double Dispatch} facilitated by dynamic polymorphism and method overloading. Inherently, C++ only supports \textit{Single Dispatch}, meaning that polymorphic method resolution is based solely on the runtime type of the calling object. 
+At its core, the Visitor pattern leverages the concept of \textit{Double Dispatch} facilitated by dynamic polymorphism and method overloading. Inherently, C++ only supports \textit{Single Dispatch}, meaning that polymorphic method resolution is based solely on the runtime type of the calling object \cite{iglberger2022}.
 
 The Visitor pattern elegantly circumvents this language limitation by simulating double dispatch through a sequence of two consecutive single dispatch calls, as demonstrated in the conceptual snippet above:
 \begin{enumerate}

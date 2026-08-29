@@ -1,7 +1,7 @@
 \section{Real-World Applications}
 \label{sec:applications}
 
-The Visitor pattern excels in domains where complex, stable object structures require frequent application of new, distinct operations. Its ability to decouple algorithms from data structures makes it a foundational architectural choice in several critical software engineering fields.
+The Visitor pattern excels in domains where complex, stable object structures require frequent application of new, distinct operations. Its ability to decouple algorithms from data structures makes it a foundational architectural choice in several critical software engineering fields \cite{gof1994}.
 
 \subsection{Compiler Construction and AST Processing}
 One of the most canonical applications of the Visitor pattern is in compiler design, transpilers, and code analysis tools. During processing, the source code is parsed into an \textbf{Abstract Syntax Tree (AST)}---a deeply nested, heterogeneous tree where each node represents a syntactic construct (e.g., \texttt{IfStatement}, \texttt{Variable\allowbreak Declaration}). 
@@ -20,4 +20,4 @@ While not universally adopted by all modern GUI frameworks, some architectures e
 \subsection{Document Serialization and Exporting}
 Enterprise software frequently deals with complex domain models, such as CAD drawings, vector graphics (as demonstrated in the \texttt{Shape} examples earlier), or rich text documents. A persistent requirement in such systems is the ability to export these object structures into various formats, such as XML, JSON, or PDF.
 
-Rather than forcing every domain object to implement \texttt{exportTo\allowbreak XML()} and \texttt{exportTo\allowbreak JSON()}, a \texttt{Serialization\allowbreak Visitor} is created for each target format. This approach allows developers to introduce new export formats seamlessly by simply adding a new concrete visitor, fully satisfying the Open/Closed Principle while keeping the core domain models lean and focused solely on business logic.
+Rather than forcing every domain object to implement \texttt{exportTo\allowbreak XML()} and \texttt{exportTo\allowbreak JSON()}, a \texttt{Serialization\allowbreak Visitor} is created for each target format. This approach allows developers to introduce new export formats seamlessly by simply adding a new concrete visitor, fully satisfying the Open/Closed Principle while keeping the core domain models lean and focused solely on business logic \cite{gof1994}.

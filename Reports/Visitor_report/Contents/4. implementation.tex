@@ -1,7 +1,7 @@
 \section{Implementation: Classic Visitor in C++}
 \label{sec:implementation}
 
-To demonstrate the practical application of the theoretical concepts discussed, this section presents a complete, runnable C++ implementation of the Classic Visitor pattern applied to the geometric shapes scenario. 
+To demonstrate the practical application of the theoretical concepts discussed, this section presents a complete, runnable C++ implementation of the Classic Visitor pattern applied to the geometric shapes scenario \cite{gof1994}.
 
 In a professional C++ software architecture, these components are typically distributed across multiple header and source files to minimize compilation dependencies. A critical technical nuance when implementing the Visitor pattern in C++ is the inherently circular dependency between the \texttt{Visitor} interface and the \texttt{Element} interface. To resolve this, forward declarations must be utilized appropriately. The implementation is logically divided into three primary components: core interfaces, concrete elements and operations, and client execution.
 

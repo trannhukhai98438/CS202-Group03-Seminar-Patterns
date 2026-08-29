@@ -7,7 +7,7 @@ This section critically evaluates the three discussed architectural approaches f
 
 \textbf{Advantages:}
 \begin{itemize}
-    \item \textbf{Extensibility of Operations:} It facilitates the seamless addition of new operations (Visitors) without modifying the existing codebase of the element hierarchy, strictly adhering to the Open/Closed Principle (OCP) in terms of behaviors.
+    \item \textbf{Extensibility of Operations:} It facilitates the seamless addition of new operations (Visitors) without modifying the existing codebase of the element hierarchy, strictly adhering to the Open/Closed Principle (OCP) in terms of behaviors \cite{gof1994}.
     \item \textbf{Cross-Hierarchy Processing:} The \texttt{Visitor} interface can declare \texttt{visit} methods for concrete elements that do not share the same abstract base class, allowing operations to span multiple disparate class hierarchies.
 \end{itemize}
 
@@ -25,7 +25,7 @@ This section critically evaluates the three discussed architectural approaches f
 
 \textbf{Advantages:}
 \begin{itemize}
-    \item \textbf{Observed Runtime Advantage in the Benchmark:} By storing objects by value, \texttt{std::variant} ensures contiguous memory allocation (cache-friendly). Furthermore, it utilizes compile-time type-based visitation over a closed set of alternatives rather than traditional vtables, reducing dispatch overhead in common scenarios.
+    \item \textbf{Observed Runtime Advantage in the Benchmark:} By storing objects by value, \texttt{std::variant} ensures contiguous memory allocation (cache-friendly). Furthermore, it utilizes compile-time type-based visitation over a closed set of alternatives rather than traditional vtables, reducing dispatch overhead in common scenarios \cite{cpprefvariant,cpprefvisit}.
     \item \textbf{Non-Intrusive Design:} The elements remain entirely independent. There is no need to define a base class or implement an \texttt{accept} method, allowing this approach to work seamlessly with third-party or legacy classes.
     \item \textbf{Flexible Subsetting:} Developers can define a variant using a specific subset of derived classes rather than being forced to depend on the entire hierarchy.
     \item \textbf{Code Deduplication:} By leveraging generic lambdas (\texttt{auto}) or templated \texttt{operator()} methods inside the visitor functor, developers can handle multiple types implicitly, significantly reducing repetitive code (adhering to the DRY principle).
@@ -42,13 +42,13 @@ This section critically evaluates the three discussed architectural approaches f
 
 \textbf{Advantages:}
 \begin{itemize}
-    \item \textbf{Decoupled Architecture:} It entirely eliminates the circular dependency problem found in the Classic Visitor by utilizing a degenerate base interface.
+    \item \textbf{Decoupled Architecture:} It entirely eliminates the circular dependency problem found in the Classic Visitor by utilizing a degenerate base interface \cite{martin1997}.
     \item \textbf{Safe and Independent Evolution:} Acyclic Visitor reduces the coupling between the central visitor interface and individual element types, allowing new element-specific visitor interfaces to be introduced without modifying a monolithic Visitor interface. This prevents cascading compilation errors when extending parts of the system.
     \item \textbf{Selective Implementation:} Concrete visitors are only required to inherit and implement the specific visitor interfaces for the elements they actually intend to process, avoiding bloated ``catch-all'' interfaces.
 \end{itemize}
 
 \textbf{Disadvantages:}
 \begin{itemize}
-    \item \textbf{Severe Runtime Overhead:} The core dispatch mechanism relies on cross-casting via \texttt{dynamic\_cast}. Run-Time Type Information (RTTI) lookups are notoriously slow in C++, making this pattern unsuitable for performance-critical applications (e.g., game engines or high-frequency trading).
+    \item \textbf{Severe Runtime Overhead:} The core dispatch mechanism relies on cross-casting via \texttt{dynamic\_cast}. Run-Time Type Information (RTTI) lookups are notoriously slow in C++, making this pattern unsuitable for performance-critical applications (e.g., game engines or high-frequency trading) \cite{cpprefrtti}.
     \item \textbf{Retained Intrusiveness:} Despite fixing the dependency cycle, the Acyclic Visitor still requires element classes to implement the \texttt{accept} method, maintaining an intrusive footprint on the data structures.
 \end{itemize}

@@ -6,12 +6,12 @@ This section explores two structural alternatives to the Classic Visitor pattern
 \subsection{Modern C++ Approach: \texttt{std::variant} and \texttt{std::visit}}
 
 \subsubsection{Overview of \texttt{std::variant}}
-Introduced in the C++17 standard, \texttt{std::variant} is a type-safe union. It allows a single variable to store exactly one object from a predetermined, finite set of types. Unlike polymorphic pointers that refer to a heap-allocated base class, a \texttt{std::variant} stores its active value directly by value and maintains an internal index to track which type is currently active.
+Introduced in the C++17 standard, \texttt{std::variant} is a type-safe union. It allows a single variable to store exactly one object from a predetermined, finite set of types. Unlike polymorphic pointers that refer to a heap-allocated base class, a \texttt{std::variant} stores its active value directly by value and maintains an internal index to track which type is currently active \cite{cpprefvariant}.
 
 \subsubsection{Mechanism: Functors and Runtime Dispatching}
 The implementation utilizing \texttt{std::variant} completely changes the dispatch mechanism by removing the abstract base class (\texttt{Shape}) and the \texttt{accept} methods. 
 
-In this architecture, the ``Visitor'' is constructed as a Functor---a structure containing overloaded \texttt{operator()} methods for each concrete type. At runtime, the \texttt{std::visit} standard library function acts as the central dispatcher. It performs dispatch based on the active alternative stored in the \texttt{std::variant}. In common implementations, this may be realized using a dispatch table or an equivalent optimized mechanism, which automatically extracts the underlying concrete object and invokes the matching \texttt{operator()} overload within the functor.
+In this architecture, the ``Visitor'' is constructed as a Functor---a structure containing overloaded \texttt{operator()} methods for each concrete type. At runtime, the \texttt{std::visit} standard library function acts as the central dispatcher. It performs dispatch based on the active alternative stored in the \texttt{std::variant}. In common implementations, this may be realized using a dispatch table or an equivalent optimized mechanism, which automatically extracts the underlying concrete object and invokes the matching \texttt{operator()} overload within the functor \cite{cpprefvisit}.
 
 % PLACEHOLDER FOR UML DIAGRAM
 \begin{figure}[H]
@@ -74,7 +74,7 @@ void runModernVisitor() {
 \subsection{The Acyclic Visitor Pattern}
 
 \subsubsection{Structural Overview}
-The Acyclic Visitor pattern alters the class hierarchy by utilizing a degenerate (empty) base visitor class. Instead of a single, monolithic \texttt{Visitor} interface that declares \texttt{visit} methods for all elements, the Acyclic pattern establishes discrete, independent visitor interfaces for each concrete element (e.g., \texttt{CircleVisitor}, \texttt{RectangleVisitor}). A concrete visitor class then inherits from the degenerate base and selectively implements only the interfaces corresponding to the elements it intends to process.
+The Acyclic Visitor pattern alters the class hierarchy by utilizing a degenerate (empty) base visitor class. Instead of a single, monolithic \texttt{Visitor} interface that declares \texttt{visit} methods for all elements, the Acyclic pattern establishes discrete, independent visitor interfaces for each concrete element (e.g., \texttt{CircleVisitor}, \texttt{RectangleVisitor}). A concrete visitor class then inherits from the degenerate base and selectively implements only the interfaces corresponding to the elements it intends to process \cite{martin1997}.
 
 % PLACEHOLDER FOR UML DIAGRAM
 \begin{figure}[H]
@@ -85,7 +85,7 @@ The Acyclic Visitor pattern alters the class hierarchy by utilizing a degenerate
 \end{figure}
 
 \subsubsection{Mechanism: Cross-Casting}
-The core dispatch mechanism in the Acyclic Visitor relies on C++ Run-Time Type Information (RTTI) through cross-casting. 
+The core dispatch mechanism in the Acyclic Visitor relies on C++ Run-Time Type Information (RTTI) through cross-casting \cite{cpprefrtti}.
 
 When the client invokes \texttt{accept(VisitorBase\&)} on an element, the element receives the degenerate base reference. Inside the \texttt{accept} method, the concrete element attempts to execute a \texttt{dynamic\_cast} to cast the incoming base visitor reference into its own specific visitor interface pointer (e.g., \texttt{Circle} attempts to cast to \texttt{CircleVisitor*}). If the cast is successful (meaning the concrete visitor implemented that specific interface), the element calls the \texttt{visit} method. If the cast fails, the operation is safely bypassed.
 
